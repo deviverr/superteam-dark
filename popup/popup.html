@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Superteam Earn Dark</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+
+  <!-- Header — title only, no logo -->
+  <header class="popup-header">
+    <span class="header-title">Earn Dark</span>
+  </header>
+
+  <!-- Tabs -->
+  <nav class="tabs">
+    <button class="tab-btn active" data-tab="theme">Theme</button>
+    <button class="tab-btn" data-tab="customize">Customize</button>
+    <button class="tab-btn" data-tab="settings">Settings</button>
+  </nav>
+
+  <!-- ── Tab: Theme ──────────────────────────────────────────── -->
+  <section class="tab-panel active" id="tab-theme">
+
+    <!-- Master toggle -->
+    <div class="row row-toggle">
+      <span class="row-label">Dark mode</span>
+      <label class="toggle">
+        <input type="checkbox" id="toggle-dark" />
+        <span class="slider"></span>
+      </label>
+    </div>
+
+    <!-- Mode selector -->
+    <div class="section-title">Switching mode</div>
+
+    <label class="radio-row">
+      <input type="radio" name="mode" value="manual" id="mode-manual" />
+      <span class="radio-label">
+        <span class="radio-name">Manual</span>
+        <span class="radio-desc">Use the toggle above</span>
+      </span>
+    </label>
+
+    <label class="radio-row">
+      <input type="radio" name="mode" value="system" id="mode-system" />
+      <span class="radio-label">
+        <span class="radio-name">Follow system</span>
+        <span class="radio-desc">Matches OS dark/light setting</span>
+      </span>
+    </label>
+
+    <label class="radio-row">
+      <input type="radio" name="mode" value="time" id="mode-time" />
+      <span class="radio-label">
+        <span class="radio-name">Time-based</span>
+        <span class="radio-desc">Configure range in Settings</span>
+      </span>
+    </label>
+
+    <!-- Reading mode -->
+    <div class="section-title">Extras</div>
+
+    <div class="row row-toggle compact">
+      <span class="row-label">
+        Reading mode
+        <span class="row-sublabel">Wider content, better line spacing</span>
+      </span>
+      <label class="toggle small">
+        <input type="checkbox" id="reading-mode" />
+        <span class="slider"></span>
+      </label>
+    </div>
+
+  </section>
+
+  <!-- ── Tab: Customize ─────────────────────────────────────── -->
+  <section class="tab-panel" id="tab-customize">
+
+    <!-- Preset themes -->
+    <div class="section-title">Preset themes</div>
+    <div class="preset-row">
+      <button class="preset-btn" data-preset="github"     title="GitHub Dark">GitHub</button>
+      <button class="preset-btn" data-preset="amoled"     title="True black for OLED">AMOLED</button>
+      <button class="preset-btn" data-preset="nord"       title="Nord palette">Nord</button>
+      <button class="preset-btn" data-preset="dracula"    title="Dracula palette">Dracula</button>
+    </div>
+    <div class="preset-row">
+      <button class="preset-btn" data-preset="catppuccin" title="Catppuccin Mocha">Catppuccin</button>
+      <button class="preset-btn" data-preset="tokyonight" title="Tokyo Night">Tokyo Night</button>
+      <button class="preset-btn" data-preset="gruvbox"    title="Gruvbox Dark">Gruvbox</button>
+      <button class="preset-btn" data-preset="onedark"    title="One Dark">One Dark</button>
+    </div>
+
+    <!-- Colors -->
+    <div class="section-title">Colors</div>
+
+    <div class="color-row">
+      <label class="color-label" for="color-bg">Background</label>
+      <div class="color-input-wrap">
+        <input type="color" id="color-bg" value="#0d1117" />
+        <input type="text" id="color-bg-text" class="color-text" value="#0d1117" maxlength="7" />
+      </div>
+    </div>
+
+    <div class="color-row">
+      <label class="color-label" for="color-text">Text</label>
+      <div class="color-input-wrap">
+        <input type="color" id="color-text" value="#e6edf3" />
+        <input type="text" id="color-text-text" class="color-text" value="#e6edf3" maxlength="7" />
+      </div>
+    </div>
+
+    <div class="color-row">
+      <label class="color-label" for="color-accent">Accent</label>
+      <div class="color-input-wrap">
+        <input type="color" id="color-accent" value="#5522e0" />
+        <input type="text" id="color-accent-text" class="color-text" value="#5522e0" maxlength="7" />
+      </div>
+    </div>
+
+    <!-- Font size -->
+    <div class="section-title">Font size</div>
+    <div class="font-row">
+      <span class="font-small">A</span>
+      <input type="range" id="font-size" min="12" max="24" step="1" value="16" class="font-slider" />
+      <span class="font-large">A</span>
+      <span id="font-size-label" class="font-value">16px</span>
+    </div>
+
+    <!-- Hide sections -->
+    <div class="section-title">Hide sections</div>
+
+    <div class="row row-toggle compact">
+      <span class="row-label">Navigation bar</span>
+      <label class="toggle small">
+        <input type="checkbox" id="hide-nav" />
+        <span class="slider"></span>
+      </label>
+    </div>
+
+    <div class="row row-toggle compact">
+      <span class="row-label">Sidebar</span>
+      <label class="toggle small">
+        <input type="checkbox" id="hide-sidebar" />
+        <span class="slider"></span>
+      </label>
+    </div>
+
+    <div class="row row-toggle compact">
+      <span class="row-label">Banners &amp; alerts</span>
+      <label class="toggle small">
+        <input type="checkbox" id="hide-banner" />
+        <span class="slider"></span>
+      </label>
+    </div>
+
+    <div class="row row-toggle compact">
+      <span class="row-label">Footer</span>
+      <label class="toggle small">
+        <input type="checkbox" id="hide-footer" />
+        <span class="slider"></span>
+      </label>
+    </div>
+
+    <!-- Custom logo -->
+    <div class="section-title">Custom logo</div>
+
+    <div class="row row-toggle compact">
+      <span class="row-label">Enable logo swap</span>
+      <label class="toggle small">
+        <input type="checkbox" id="logo-enabled" />
+        <span class="slider"></span>
+      </label>
+    </div>
+
+    <div class="logo-row">
+      <img id="logo-preview" src="../assets/earn-logo-dark.png" alt="logo preview" class="logo-preview" />
+      <div class="logo-actions">
+        <label class="btn-small" for="logo-upload">File</label>
+        <input type="file" id="logo-upload" accept="image/*" hidden />
+        <button class="btn-small btn-ghost" id="logo-reset">Reset</button>
+      </div>
+    </div>
+
+    <div class="url-row">
+      <input type="url" id="logo-url" class="url-input" placeholder="https://...logo.png" />
+      <button class="btn-small" id="logo-url-set">Set</button>
+    </div>
+
+    <!-- Wallpaper -->
+    <div class="section-title">Wallpaper</div>
+
+    <div class="url-row">
+      <input type="url" id="wallpaper-url" class="url-input" placeholder="https://...image.jpg" />
+      <button class="btn-small" id="wallpaper-url-set">Set</button>
+    </div>
+
+    <div class="logo-actions" style="padding: 4px 0;">
+      <label class="btn-small" for="wallpaper-upload">File</label>
+      <input type="file" id="wallpaper-upload" accept="image/*" hidden />
+      <button class="btn-small btn-ghost" id="wallpaper-clear">Clear</button>
+    </div>
+
+    <div class="font-row" id="wallpaper-opacity-row">
+      <span class="font-small">5%</span>
+      <input type="range" id="wallpaper-opacity" min="5" max="60" step="5" value="15" class="font-slider" />
+      <span class="font-large" style="font-size:13px">60%</span>
+      <span id="wallpaper-opacity-label" class="font-value">15%</span>
+    </div>
+
+    <!-- Per-page overrides -->
+    <div id="page-override-section">
+      <div class="section-title">
+        Page overrides
+        <span id="page-group-label" class="page-group-tag"></span>
+      </div>
+      <p class="settings-desc">Override hide settings for this page only.</p>
+
+      <div class="row row-toggle compact">
+        <span class="row-label">Hide nav (this page)</span>
+        <label class="toggle small">
+          <input type="checkbox" id="page-hide-nav" />
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="row row-toggle compact">
+        <span class="row-label">Hide sidebar (this page)</span>
+        <label class="toggle small">
+          <input type="checkbox" id="page-hide-sidebar" />
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="row row-toggle compact">
+        <span class="row-label">Hide banners (this page)</span>
+        <label class="toggle small">
+          <input type="checkbox" id="page-hide-banner" />
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="row row-toggle compact">
+        <span class="row-label">Hide footer (this page)</span>
+        <label class="toggle small">
+          <input type="checkbox" id="page-hide-footer" />
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <button class="btn-full btn-ghost" id="clear-page-override" style="margin-top:4px">Clear page overrides</button>
+    </div>
+
+    <!-- Save / Reload / Reset -->
+    <div class="action-row">
+      <button class="btn-half btn-ghost" id="reload-settings">↺ Reload</button>
+      <button class="btn-half btn-accent" id="save-settings">Save</button>
+    </div>
+
+    <button class="btn-full btn-ghost" id="reset-colors">Reset colors to defaults</button>
+
+  </section>
+
+  <!-- ── Tab: Settings ──────────────────────────────────────── -->
+  <section class="tab-panel" id="tab-settings">
+
+    <div class="section-title">Time-based dark mode</div>
+    <p class="settings-desc">Dark mode activates between these hours.</p>
+
+    <div class="time-row">
+      <label class="time-label" for="time-start">Dark from</label>
+      <input type="time" id="time-start" class="time-input" value="21:00" />
+    </div>
+
+    <div class="time-row">
+      <label class="time-label" for="time-end">Dark until</label>
+      <input type="time" id="time-end" class="time-input" value="07:00" />
+    </div>
+
+    <div class="section-title" style="margin-top:20px">About</div>
+
+    <div class="about-block">
+      <p class="settings-desc">Superteam Earn Dark v1.2.0</p>
+      <p class="settings-desc">Adds dark mode &amp; customization to superteam.fun/earn</p>
+      <a href="https://ko-fi.com/deviver" target="_blank" class="kofi-link">
+        <img src="../assets/by_dev.png" alt="by dev" class="kofi-img" />
+      </a>
+    </div>
+
+  </section>
+
+  <script src="popup.js"></script>
+</body>
+</html>
