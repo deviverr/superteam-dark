@@ -44,7 +44,8 @@ point for your own custom theme.
 
 ★ DARK MODE, DONE RIGHT
 A sun/moon button is added to the Earn top bar so you can flip dark mode on or
-off instantly — plus a palette button to switch themes without opening the popup.
+off instantly — plus a theme-menu button to switch presets and your saved
+themes without opening the popup.
 
 ★ SMART SWITCHING
 - Manual toggle
