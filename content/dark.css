@@ -15,6 +15,35 @@ html.se-dark {
   color-scheme: dark;
 }
 
+/* ── Smooth theme transition ──────────────────────────────────
+   Applies unconditionally (not gated to html.se-dark) so both the
+   light→dark AND dark→light directions animate — a transition rule
+   scoped only inside .se-dark would not be present in the "before"
+   state when switching dark mode off, and could look uneven. Colors
+   are cheap to animate (repaint only, no layout), so this is safe on
+   listing-heavy pages. Skipped for users who asked for less motion. */
+@media (prefers-reduced-motion: no-preference) {
+  html,
+  html body,
+  html #__next,
+  html main,
+  html header,
+  html nav,
+  html footer,
+  html aside,
+  html .sticky,
+  html a,
+  html button,
+  html input,
+  html textarea,
+  html select,
+  html [class*="bg-"],
+  html [class*="text-"],
+  html [class*="border-"] {
+    transition: background-color .18s ease, color .18s ease, border-color .18s ease, fill .18s ease, stroke .18s ease;
+  }
+}
+
 /* ── Base ──────────────────────────────────────────────────── */
 html.se-dark body,
 html.se-dark #__next,
@@ -50,29 +79,40 @@ html.se-dark .sticky {
   background-color: var(--se-bg2) !important;
 }
 
-/* ── Backgrounds — precise Tailwind class targeting ─────────── */
-html.se-dark .bg-white {
+/* ── Backgrounds — exact Tailwind token matching ──────────────
+   IMPORTANT: these use [class~="..."] (whitespace-separated EXACT
+   token match), not [class*="..."] (substring match). Tailwind keeps
+   variant prefixes as part of the literal class token, e.g. an
+   element that is only "hover:bg-gray-100" (transparent at rest,
+   filled on hover) still contains the SUBSTRING "bg-gray-100" — so a
+   *= selector force-fills it permanently, which is exactly why nav
+   icon buttons, sidebar rows, dropdown items etc. showed a background
+   in dark mode that light mode never shows at rest. ~= only matches
+   when the token is its own whole class, so hover:/focus:/active:/
+   sm:/md:/lg: prefixed variants are correctly left alone (they still
+   work via the real :hover/:focus rules further below). */
+html.se-dark [class~="bg-white"] {
   background-color: var(--se-bg2) !important;
 }
 
-html.se-dark .bg-gray-50,
-html.se-dark .bg-slate-50 {
+html.se-dark [class~="bg-gray-50"],
+html.se-dark [class~="bg-slate-50"] {
   background-color: var(--se-bg2) !important;
 }
 
-html.se-dark .bg-gray-100,
-html.se-dark .bg-slate-100 {
+html.se-dark [class~="bg-gray-100"],
+html.se-dark [class~="bg-slate-100"] {
   background-color: var(--se-bg3) !important;
 }
 
-html.se-dark .bg-gray-200,
-html.se-dark .bg-slate-200 {
+html.se-dark [class~="bg-gray-200"],
+html.se-dark [class~="bg-slate-200"] {
   background-color: var(--se-bg3) !important;
 }
 
 /* Card/listing depth — white bg + shadow for separation */
-html.se-dark a.bg-white,
-html.se-dark div.bg-white {
+html.se-dark a[class~="bg-white"],
+html.se-dark div[class~="bg-white"] {
   box-shadow: 0 1px 3px rgba(0,0,0,0.4) !important;
 }
 
@@ -95,72 +135,72 @@ html.se-dark .hover\:bg-white:hover {
   background-color: var(--se-bg2) !important;
 }
 
-/* ── Text — per-shade mapping ───────────────────────────────── */
-html.se-dark .text-black {
+/* ── Text — per-shade mapping (exact token match, see note above) ── */
+html.se-dark [class~="text-black"] {
   color: var(--se-text) !important;
 }
 
-html.se-dark .text-white {
+html.se-dark [class~="text-white"] {
   color: var(--se-text) !important;
 }
 
-html.se-dark .text-slate-900,
-html.se-dark .text-slate-800,
-html.se-dark .text-slate-700 {
+html.se-dark [class~="text-slate-900"],
+html.se-dark [class~="text-slate-800"],
+html.se-dark [class~="text-slate-700"] {
   color: var(--se-text) !important;
 }
 
-html.se-dark .text-slate-600,
-html.se-dark .text-slate-500 {
+html.se-dark [class~="text-slate-600"],
+html.se-dark [class~="text-slate-500"] {
   color: var(--se-text-muted) !important;
 }
 
-html.se-dark .text-slate-400,
-html.se-dark .text-slate-300 {
+html.se-dark [class~="text-slate-400"],
+html.se-dark [class~="text-slate-300"] {
   color: var(--se-text-muted) !important;
 }
 
-html.se-dark .text-gray-900,
-html.se-dark .text-gray-800 {
+html.se-dark [class~="text-gray-900"],
+html.se-dark [class~="text-gray-800"] {
   color: var(--se-text) !important;
 }
 
-html.se-dark .text-gray-700,
-html.se-dark .text-gray-600 {
+html.se-dark [class~="text-gray-700"],
+html.se-dark [class~="text-gray-600"] {
   color: var(--se-text-muted) !important;
 }
 
-html.se-dark .text-gray-500,
-html.se-dark .text-gray-400 {
+html.se-dark [class~="text-gray-500"],
+html.se-dark [class~="text-gray-400"] {
   color: var(--se-text-muted) !important;
 }
 
 /* Zinc text scale */
-html.se-dark .text-zinc-900,
-html.se-dark .text-zinc-800,
-html.se-dark .text-zinc-700 {
+html.se-dark [class~="text-zinc-900"],
+html.se-dark [class~="text-zinc-800"],
+html.se-dark [class~="text-zinc-700"] {
   color: var(--se-text) !important;
 }
 
-html.se-dark .text-zinc-600,
-html.se-dark .text-zinc-500 {
+html.se-dark [class~="text-zinc-600"],
+html.se-dark [class~="text-zinc-500"] {
   color: var(--se-text-muted) !important;
 }
 
-html.se-dark .text-zinc-400,
-html.se-dark .text-zinc-300 {
+html.se-dark [class~="text-zinc-400"],
+html.se-dark [class~="text-zinc-300"] {
   color: var(--se-text-muted) !important;
 }
 
 /* ── Borders — specific classes, not the nuclear [class*="border"] ── */
-html.se-dark .border-slate-100,
-html.se-dark .border-slate-200,
-html.se-dark .border-slate-300 {
+html.se-dark [class~="border-slate-100"],
+html.se-dark [class~="border-slate-200"],
+html.se-dark [class~="border-slate-300"] {
   border-color: var(--se-border) !important;
 }
 
-html.se-dark .border-gray-200,
-html.se-dark .border-gray-300 {
+html.se-dark [class~="border-gray-200"],
+html.se-dark [class~="border-gray-300"] {
   border-color: var(--se-border) !important;
 }
 
@@ -171,7 +211,9 @@ html.se-dark .border-b {
   border-color: var(--se-border) !important;
 }
 
-/* border-black/20 overlay borders */
+/* border-black/20 overlay borders — kept as substring match since the
+   Tailwind opacity-modifier suffix (/20 etc.) is part of the token, so
+   an exact-match ~= would never match it. */
 html.se-dark [class*="border-black"] {
   border-color: var(--se-border) !important;
 }
@@ -250,28 +292,36 @@ html.se-dark header a:hover {
 }
 
 /* ── Sidebar ────────────────────────────────────────────────── */
+/* Superteam Earn's sidebar has no distinct fill in light mode — it's
+   transparent and blends into the page background. Match that instead
+   of boxing it in its own panel color (was --se-bg2, which made it
+   read as an unwanted filled section). */
 html.se-dark aside,
 html.se-dark [class*="sidebar"],
 html.se-dark [class*="Sidebar"] {
-  background-color: var(--se-bg2) !important;
+  background-color: var(--se-bg) !important;
   border-color: var(--se-border) !important;
 }
 
 /* ── Active badge/filter state — derive from accent var (color-mix: Chrome 111+) ── */
-html.se-dark .bg-indigo-100 {
+html.se-dark [class~="bg-indigo-100"] {
   background-color: color-mix(in srgb, var(--se-accent) 15%, transparent) !important;
 }
 
-html.se-dark .bg-indigo-50 {
+html.se-dark [class~="bg-indigo-50"] {
   background-color: color-mix(in srgb, var(--se-accent) 8%, transparent) !important;
 }
 
-html.se-dark .text-indigo-600 {
+html.se-dark [class~="bg-purple-50"] {
+  background-color: color-mix(in srgb, var(--se-accent) 8%, transparent) !important;
+}
+
+html.se-dark [class~="text-indigo-600"] {
   color: color-mix(in srgb, var(--se-accent) 80%, white) !important;
 }
 
-html.se-dark .border-indigo-300,
-html.se-dark .border-indigo-50 {
+html.se-dark [class~="border-indigo-300"],
+html.se-dark [class~="border-indigo-50"] {
   border-color: color-mix(in srgb, var(--se-accent) 40%, transparent) !important;
 }
 
@@ -280,17 +330,42 @@ html.se-dark .hover\:text-slate-700:hover {
   color: var(--se-text) !important;
 }
 
+/* Generic white-border safety net */
+html.se-dark [class~="border-white"] {
+  border-color: var(--se-border) !important;
+}
+
+/* shadcn/ui dropdown triggers (profile menu, and any future ones — this
+   data-slot attribute is a stable hook the site's component library sets
+   on every Radix dropdown trigger, so it covers new dropdowns the SPA adds
+   without needing new selectors). Base classList only covers :hover; the
+   site's own classes for :active and the open [data-state] variant render
+   light-mode colors that need separate overriding since pseudo-class and
+   attribute-selector CSS specificity doesn't fall back to a plain class rule. */
+html.se-dark [data-slot="dropdown-menu-trigger"]:hover,
+html.se-dark [data-slot="dropdown-menu-trigger"]:active,
+html.se-dark [data-slot="dropdown-menu-trigger"][data-state="open"] {
+  background-color: var(--se-bg3) !important;
+}
+
 /* ── Dropdowns / Modals / Overlays ─────────────────────────── */
+/* :not([class*="se-tb"]) excludes our OWN in-page toolbar (.se-tb-menu,
+   .se-tb-menu-item, .se-tb-menu-btn, ...) — those class names contain the
+   substring "menu" too, so without this exclusion this site-targeting
+   catch-all was fighting the toolbar's own .se-tb-menu-* rules further
+   below: it forced bg2/border/text onto the theme-menu trigger button
+   (should stay transparent, like the sun/moon toggle) and flattened the
+   active-theme's purple highlight to the same color as every other item. */
 html.se-dark [role="dialog"],
 html.se-dark [data-radix-popper-content-wrapper],
-html.se-dark [class*="modal"],
-html.se-dark [class*="Modal"],
-html.se-dark [class*="dropdown"],
-html.se-dark [class*="Dropdown"],
-html.se-dark [class*="popover"],
-html.se-dark [class*="Popover"],
-html.se-dark [class*="menu"],
-html.se-dark [class*="Menu"] {
+html.se-dark [class*="modal"]:not([class*="se-tb"]),
+html.se-dark [class*="Modal"]:not([class*="se-tb"]),
+html.se-dark [class*="dropdown"]:not([class*="se-tb"]),
+html.se-dark [class*="Dropdown"]:not([class*="se-tb"]),
+html.se-dark [class*="popover"]:not([class*="se-tb"]),
+html.se-dark [class*="Popover"]:not([class*="se-tb"]),
+html.se-dark [class*="menu"]:not([class*="se-tb"]),
+html.se-dark [class*="Menu"]:not([class*="se-tb"]) {
   background-color: var(--se-bg2) !important;
   border-color: var(--se-border) !important;
   color: var(--se-text) !important;
@@ -312,12 +387,16 @@ html.se-dark [class*="Chip"] {
 
 /* ── White gradient overlays (fade-out effects) ─────────────── */
 /* Site uses bg-gradient-to-t from-white to fade content edges */
-html.se-dark [class*="from-white"] {
+html.se-dark [class~="from-white"] {
   --tw-gradient-from: var(--se-bg) !important;
 }
 
-html.se-dark [class*="to-white"] {
+html.se-dark [class~="to-white"] {
   --tw-gradient-to: var(--se-bg) !important;
+}
+
+html.se-dark [class~="via-white"] {
+  --tw-gradient-via: var(--se-bg) !important;
 }
 
 /* ── Skeleton loaders ───────────────────────────────────────── */
@@ -365,46 +444,32 @@ html.se-dark ::selection {
   color: #fff;
 }
 
-/* ── Reading mode ───────────────────────────────────────────── */
-html.se-dark.se-reading main,
-html.se-dark.se-reading article,
-html.se-dark.se-reading #__next > div > div:not(nav):not(header):not(aside) {
-  max-width: 780px !important;
-  margin-left: auto !important;
-  margin-right: auto !important;
-}
-
-html.se-dark.se-reading body {
-  line-height: 1.8 !important;
-}
-
-html.se-dark.se-reading p,
-html.se-dark.se-reading li {
-  font-size: 1.05em !important;
-}
-
-/* ── Hide-section helpers (toggled by JS) ───────────────────── */
-html.se-dark.se-hide-nav nav,
-html.se-dark.se-hide-nav header {
+/* ── Hide-section helpers (toggled by JS) ─────────────────────
+   Deliberately NOT scoped to html.se-dark — hiding the nav/sidebar/
+   banner/footer is a declutter feature independent of the color theme,
+   so it must keep working when dark mode is off too. Applies instantly
+   via classList.toggle in content.js; no page reload involved. */
+html.se-hide-nav nav,
+html.se-hide-nav header {
   display: none !important;
 }
 
-html.se-dark.se-hide-sidebar aside,
-html.se-dark.se-hide-sidebar [class*="sidebar"],
-html.se-dark.se-hide-sidebar [class*="Sidebar"] {
+html.se-hide-sidebar aside,
+html.se-hide-sidebar [class*="sidebar"],
+html.se-hide-sidebar [class*="Sidebar"] {
   display: none !important;
 }
 
-html.se-dark.se-hide-banner [class*="banner"],
-html.se-dark.se-hide-banner [class*="Banner"],
-html.se-dark.se-hide-banner [class*="announcement"],
-html.se-dark.se-hide-banner [class*="alert"] {
+html.se-hide-banner [class*="banner"],
+html.se-hide-banner [class*="Banner"],
+html.se-hide-banner [class*="announcement"],
+html.se-hide-banner [class*="alert"] {
   display: none !important;
 }
 
-html.se-dark.se-hide-footer footer,
-html.se-dark.se-hide-footer [class*="footer"],
-html.se-dark.se-hide-footer [class*="Footer"] {
+html.se-hide-footer footer,
+html.se-hide-footer [class*="footer"],
+html.se-hide-footer [class*="Footer"] {
   display: none !important;
 }
 
@@ -490,16 +555,16 @@ html.se-dark [data-sonner-toast] button {
 }
 
 /* ── Zinc background scale ──────────────────────────────────── */
-html.se-dark .bg-zinc-50 {
+html.se-dark [class~="bg-zinc-50"] {
   background-color: var(--se-bg) !important;
 }
 
-html.se-dark .bg-zinc-100 {
+html.se-dark [class~="bg-zinc-100"] {
   background-color: var(--se-bg2) !important;
 }
 
-html.se-dark .bg-zinc-200,
-html.se-dark .bg-zinc-300 {
+html.se-dark [class~="bg-zinc-200"],
+html.se-dark [class~="bg-zinc-300"] {
   background-color: var(--se-bg3) !important;
 }
 
@@ -509,9 +574,9 @@ html.se-dark .hover\:bg-zinc-200:hover {
 }
 
 /* Zinc borders */
-html.se-dark .border-zinc-100,
-html.se-dark .border-zinc-200,
-html.se-dark .border-zinc-300 {
+html.se-dark [class~="border-zinc-100"],
+html.se-dark [class~="border-zinc-200"],
+html.se-dark [class~="border-zinc-300"] {
   border-color: var(--se-border) !important;
 }
 
@@ -536,17 +601,18 @@ html.se-dark .list-node li {
 
 /* ── Arbitrary Tailwind values — profile tags ───────────────── */
 /* bg-[#EFF1F5]: Superteam light lavender tag background */
-html.se-dark [class*="bg-[#EFF1F5]"] {
+html.se-dark [class~="bg-[#EFF1F5]"] {
   background-color: var(--se-bg3) !important;
   color: var(--se-text-muted) !important;
 }
 
 /* text-[#64739C]: Superteam medium slate-blue tag text */
-html.se-dark [class*="text-[#64739C]"] {
+html.se-dark [class~="text-[#64739C]"] {
   color: var(--se-text-muted) !important;
 }
 
-/* Catch other arbitrary light bg hex values (#E__, #F__) */
+/* Catch other arbitrary light bg hex values (#E__, #F__) — genuinely
+   needs substring matching since the exact hex is unknown ahead of time. */
 html.se-dark [class*="bg-[#E"] {
   background-color: var(--se-bg3) !important;
 }
@@ -556,36 +622,49 @@ html.se-dark [class*="bg-[#F"] {
 }
 
 /* ── Logo handling ───────────────────────────────────────────── */
-/* The Earn wordmark SVG is dark (#212B34) and vanishes on dark bg.
-   content.js swaps the <img src> for a bundled dark-ready logo and
-   tags it [data-se-dark]. As a no-flash fallback, hue-preserving
-   invert keeps any not-yet-swapped logo legible for the brief moment
-   before the swap lands. */
-html.se-dark img[alt="Superteam Earn"]:not([data-se-dark]) {
+/* The Earn wordmark SVG is a dark mark and disappears on a dark
+   background. A hue-preserving invert keeps it legible everywhere
+   the site renders it (nav, mobile nav, footer) — this is a pure
+   CSS rule so it applies automatically to any instance the SPA
+   renders, including ones added after navigation, with no JS
+   matching/swapping involved. */
+html.se-dark img[alt="Superteam Earn"] {
   filter: invert(1) hue-rotate(180deg);
 }
 
+/* "Powered by Solana" footer badge — swap in a purpose-built dark
+   variant (dark pill, gradient mark) instead of algorithmically
+   inverting the light one. Matched on both alt text AND the file
+   name (belt-and-suspenders: some pages render a differently-cropped
+   instance of the same asset, and matching by src too means a stray
+   alt-text change on any one page doesn't silently break the swap and
+   leave the light logo showing). */
+html.se-dark img[alt="Powered by Solana"],
+html.se-dark img[src*="solana-powered"] {
+  content: url("../assets/solana-dark-logo.svg");
+}
+
 /* ── Violet / FEATURED badge ────────────────────────────────── */
-html.se-dark .text-violet-600 {
+html.se-dark [class~="text-violet-600"] {
   color: color-mix(in srgb, var(--se-accent) 85%, white) !important;
 }
 
-html.se-dark .bg-violet-600 {
+html.se-dark [class~="bg-violet-600"] {
   background-color: var(--se-accent) !important;
 }
 
-html.se-dark .border-violet-600 {
+html.se-dark [class~="border-violet-600"] {
   border-color: var(--se-accent) !important;
 }
 
 /* ── SVG fill / stroke colors ───────────────────────────────── */
-html.se-dark .fill-gray-500,
-html.se-dark .fill-slate-500 {
+html.se-dark [class~="fill-gray-500"],
+html.se-dark [class~="fill-slate-500"] {
   fill: var(--se-text-muted) !important;
 }
 
-html.se-dark .stroke-gray-500,
-html.se-dark .stroke-slate-500 {
+html.se-dark [class~="stroke-gray-500"],
+html.se-dark [class~="stroke-slate-500"] {
   stroke: var(--se-text-muted) !important;
 }
 
@@ -595,38 +674,69 @@ html.se-dark img[src*="/assets/backgrounds/"] {
 }
 
 /* ── Stone / neutral color scales (mirrors zinc/gray) ────────── */
-html.se-dark .text-stone-900,
-html.se-dark .text-stone-800,
-html.se-dark .text-stone-700 {
+html.se-dark [class~="text-stone-900"],
+html.se-dark [class~="text-stone-800"],
+html.se-dark [class~="text-stone-700"] {
   color: var(--se-text) !important;
 }
 
-html.se-dark .text-stone-600,
-html.se-dark .text-stone-500,
-html.se-dark .text-stone-400 {
+html.se-dark [class~="text-stone-600"],
+html.se-dark [class~="text-stone-500"],
+html.se-dark [class~="text-stone-400"] {
   color: var(--se-text-muted) !important;
 }
 
-html.se-dark .text-neutral-900,
-html.se-dark .text-neutral-800,
-html.se-dark .text-neutral-700 {
+html.se-dark [class~="text-neutral-900"],
+html.se-dark [class~="text-neutral-800"],
+html.se-dark [class~="text-neutral-700"] {
   color: var(--se-text) !important;
 }
 
-html.se-dark .text-neutral-600,
-html.se-dark .text-neutral-500,
-html.se-dark .text-neutral-400 {
+html.se-dark [class~="text-neutral-600"],
+html.se-dark [class~="text-neutral-500"],
+html.se-dark [class~="text-neutral-400"] {
   color: var(--se-text-muted) !important;
 }
 
-html.se-dark .bg-stone-100,
-html.se-dark .bg-neutral-100 {
+html.se-dark [class~="bg-stone-100"],
+html.se-dark [class~="bg-neutral-100"] {
   background-color: var(--se-bg2) !important;
 }
 
-html.se-dark .bg-stone-200,
-html.se-dark .bg-neutral-200 {
+html.se-dark [class~="bg-stone-200"],
+html.se-dark [class~="bg-neutral-200"] {
   background-color: var(--se-bg3) !important;
+}
+
+/* ── /earn/agents page — page-scoped CSS custom properties ─────
+   This page (superteam.fun/earn/agents) doesn't use the standard
+   gray/slate/white Tailwind palette the rules above target — it
+   defines its own page-local custom properties (--agent-tint,
+   --agent-ink, --agent-ink-soft, --agent-dark, --agent-accent,
+   --agent-accent-2) via Tailwind arbitrary-value classes like
+   "bg-[var(--agent-tint)]" and "[--agent-tint:#f5f7fb]", so none of
+   the selectors above ever reach it — that's why it stayed light.
+   Redefining the properties themselves (rather than every element
+   that consumes them) on the element that declares them lets every
+   var(--agent-*) usage on the page pick up the dark palette
+   automatically, including ones added later by client-side rendering.
+   --agent-accent / --agent-accent-2 are left untouched — they're this
+   page's brand identity (teal/amber), same principle as preserving
+   bg-brand-purple elsewhere. */
+html.se-dark [class*="--agent-tint:"] {
+  --agent-tint: var(--se-bg) !important;
+}
+
+html.se-dark [class*="--agent-ink-soft:"] {
+  --agent-ink-soft: var(--se-text-muted) !important;
+}
+
+html.se-dark [class*="--agent-ink:"] {
+  --agent-ink: var(--se-text) !important;
+}
+
+html.se-dark [class*="--agent-dark:"] {
+  --agent-dark: var(--se-bg2) !important;
 }
 
 /* ════════════════════════════════════════════════════════════════
@@ -683,60 +793,100 @@ html.se-dark .bg-neutral-200 {
   position: absolute;
   top: calc(100% + 8px);
   right: 0;
-  min-width: 188px;
-  padding: 6px;
+  min-width: 220px;
+  max-height: 70vh;
+  overflow-y: auto;
+  padding: 8px;
   background: #161b22;
   border: 1px solid #30363d;
   border-radius: 12px;
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
   display: none;
-  grid-template-columns: 1fr 1fr;
-  gap: 3px;
+  flex-direction: column;
+  gap: 4px;
   z-index: 2147483000;
 }
 
-.se-tb-menu.open { display: grid; }
+.se-tb-menu.open { display: flex; }
 
+.se-tb-menu-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.se-tb-menu-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: #565f89;
+  padding: 6px 4px 2px;
+}
+
+/* Theme item — matches the popup's preset-btn visual language
+   (diagonal two-tone swatch chip, label below) instead of the old
+   circle+dot layout, so the in-page menu and the popup Customize tab
+   read as the same design system. */
 .se-tb-menu-item {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 7px;
-  padding: 7px 8px;
+  gap: 5px;
+  padding: 8px 6px 7px;
   border: 1px solid transparent;
   border-radius: 8px;
   background: transparent;
   color: #e6edf3;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 500;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  text-align: left;
+  text-align: center;
   cursor: pointer;
   transition: background .12s, border-color .12s;
   white-space: nowrap;
 }
 
-.se-tb-menu-item:hover { background: #21262d; }
+.se-tb-menu-item:hover { background: #21262d; border-color: #30363d; }
 .se-tb-menu-item.active { border-color: #5522e0; background: #21262d; }
 
 .se-tb-swatch {
-  position: relative;
-  width: 18px;
-  height: 18px;
-  border-radius: 5px;
+  display: block;
+  width: 26px;
+  height: 16px;
+  border-radius: 4px;
   border: 1px solid #30363d;
+  background: linear-gradient(135deg, var(--sw-bg, #21262d) 50%, var(--sw-accent, #30363d) 50%);
   flex-shrink: 0;
-}
-
-.se-tb-swatch i {
-  position: absolute;
-  right: 2px;
-  bottom: 2px;
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
 }
 
 .se-tb-name {
   overflow: hidden;
   text-overflow: ellipsis;
+  max-width: 100%;
 }
+
+.se-tb-menu-item-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.se-tb-menu-edit,
+.se-tb-menu-delete {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #21262d;
+  border: 1px solid #30363d;
+  color: #8b949e;
+  font-size: 10px;
+  line-height: 1;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.se-tb-menu-edit:hover { background: #30363d; color: #e6edf3; }
+.se-tb-menu-delete:hover { background: #f85149; border-color: #f85149; color: #fff; }

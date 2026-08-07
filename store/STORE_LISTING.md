@@ -8,7 +8,7 @@ Copy/paste these fields into the Chrome Web Store Developer Dashboard.
 Superteam Earn Dark
 
 ## Summary / short description (≤ 132 chars)
-True dark mode for Superteam Earn — quick navbar toggle, 8 themes, custom colors, wallpaper, and per-page controls.
+Full customization for Superteam Earn — dark mode, named themes, per-element colors, wallpaper, fonts, section hiding.
 
 ## Category
 Productivity (alt: Accessibility)
@@ -16,44 +16,50 @@ Productivity (alt: Accessibility)
 ## Language
 English
 
+## Support URL
+https://github.com/deviverr/superteam-dark/issues
+
 ---
 
 ## Detailed description
 
-Make Superteam Earn easy on the eyes. Superteam Earn Dark adds a proper,
-fully-themed dark mode to superteam.fun/earn — bounties, projects, grants,
-profiles, leaderboards and everything in between.
+Superteam Earn Dark is a full customization system for superteam.fun/earn —
+bounties, projects, grants, profiles, leaderboards and everything in between.
+Dark mode is the foundation; on top of it you get complete control over color,
+wallpaper, layout, and what's visible on the page.
 
-★ ONE-CLICK TOGGLE, RIGHT IN THE NAVBAR
+★ FULL CUSTOMIZATION, EVERY SURFACE
+- Per-element color control — background, borders, text, muted text, accent,
+  and links — applied consistently across the whole site, with live preview
+- Create your own named custom themes, keep as many as you like, and switch
+  between them alongside the 8 built-in presets
+- Custom wallpaper (URL or upload) with opacity control
+- Adjustable font size
+- One-click reset back to factory defaults whenever you want a clean slate
+
+★ 8 BEAUTIFUL PRESET THEMES TO START FROM
+GitHub Dark, AMOLED (true black for OLED screens), Nord, Dracula, Catppuccin,
+Tokyo Night, Gruvbox, and One Dark. Pick one as-is, or use it as a starting
+point for your own custom theme.
+
+★ DARK MODE, DONE RIGHT
 A sun/moon button is added to the Earn top bar so you can flip dark mode on or
 off instantly — plus a palette button to switch themes without opening the popup.
-
-★ 8 BEAUTIFUL PRESET THEMES
-GitHub Dark, AMOLED (true black for OLED screens), Nord, Dracula, Catppuccin,
-Tokyo Night, Gruvbox, and One Dark. Pick one and the whole site adopts its full
-palette — backgrounds, borders, text, and accent.
-
-★ FULL CUSTOMIZATION
-- Custom background, text, and accent colors with live preview
-- Adjustable font size
-- Custom wallpaper (URL or upload) with opacity control
-- Swap in your own logo
 
 ★ SMART SWITCHING
 - Manual toggle
 - Follow your system light/dark setting
 - Schedule dark mode by time of day
 
-★ DECLUTTER
-Hide the nav bar, sidebar, banners, or footer — globally or per page type
-(bounties, grants, profiles, and more). A built-in Reading mode widens content
-and improves line spacing for long listings.
+★ DECLUTTER, PAGE BY PAGE
+Hide the nav bar, sidebar, banners, or footer — globally, or with per-page-type
+overrides (bounties, grants, profiles, and more).
 
 ★ PRIVATE BY DESIGN
 No accounts, no tracking, no analytics, no network calls. Every setting is stored
 locally on your device. The extension runs only on Superteam Earn pages.
 
-Built with care for the Superteam community. Tips: https://ko-fi.com/deviver
+Built with care for the Superteam community.
 
 ---
 
@@ -70,13 +76,15 @@ Built with care for the Superteam community. Tips: https://ko-fi.com/deviver
 > and host-scoped messaging, so no browsing-history access is needed.
 
 ## Single purpose (required statement)
-The single purpose of this extension is to apply a customizable dark theme to the
-Superteam Earn website (superteam.fun/earn).
+The single purpose of this extension is to let users customize the visual
+appearance — theme colors, dark mode, wallpaper, font size, and layout —
+of the Superteam Earn website (superteam.fun/earn).
 
 ## Data usage disclosures (Privacy practices tab)
 - Does the item collect or use personal/sensitive user data? **No.**
 - Remote code? **No** — all code is bundled in the package.
-- Privacy policy URL: host `store/PRIVACY.md` publicly (e.g. GitHub) and paste the URL.
+- Privacy policy URL: https://github.com/deviverr/superteam-dark/blob/main/store/PRIVACY.md
+  (repo is public; GitHub renders this file directly — paste this URL as-is into the dashboard field.)
 
 ---
 
@@ -86,13 +94,13 @@ Superteam Earn website (superteam.fun/earn).
   1. Earn home in dark mode with the navbar sun/moon toggle visible
   2. Theme menu open showing the 8 preset swatches
   3. Popup → Customize tab (colors + presets)
-  4. A bounty listing in dark mode (reading mode on)
+  4. A bounty listing in dark mode
   5. Wallpaper applied
 - [ ] **Small promo tile** — 440×280 PNG (optional but recommended)
 - [ ] **Marquee promo** — 1400×560 PNG (optional)
 
 ## Pre-submission checklist
-- [ ] Load `dist/superteam-earn-dark-1.2.0.zip` via chrome://extensions →
+- [ ] Load `dist/superteam-earn-dark-1.5.zip` via chrome://extensions →
       "Load unpacked" (unzip first) and smoke-test on superteam.fun/earn
 - [ ] Confirm navbar toggle + theme menu appear and persist across navigation
 - [ ] Confirm all 8 presets fully recolor the page

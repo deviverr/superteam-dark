@@ -20,19 +20,19 @@
     onedark:    { name: 'One Dark',   bg: '#282c34', bg2: '#21252b', bg3: '#2c313c', border: '#3e4451', text: '#abb2bf', muted: '#5c6370', accent: '#61afef' },
   };
 
-  // Selectors for the Superteam Earn wordmark logo across desktop/mobile navs.
-  // Real DOM uses <div>/<a href="https://superteam.fun/earn"> (not <header>/<nav>)
-  // and the logo is an inline-dark SVG (alt="Superteam Earn") that vanishes on
-  // dark backgrounds — so we swap the <img src> for a bundled dark-ready logo.
-  const LOGO_SELECTORS = [
-    'img[alt="Superteam Earn"]',
-    'a[href*="superteam.fun/earn"] img[src*="logo"]',
-    'a[href$="/earn"] img[src*="logo"]',
-    '.sticky img[src*="logo"]',
-    'header img[src*="logo"]',
-    'nav img[src*="logo"]',
-    '[class*="navbar"] img[src*="logo"]',
-  ];
+  function applyThemeColors(p) {
+    chrome.storage.local.set({
+      mode: 'manual',
+      darkEnabled: true,
+      'custom.bgColor':     p.bg,
+      'custom.bg2Color':    p.bg2,
+      'custom.bg3Color':    p.bg3,
+      'custom.borderColor': p.border,
+      'custom.textColor':   p.text,
+      'custom.mutedColor':  p.muted,
+      'custom.accentColor': p.accent,
+    });
+  }
 
   let state = {
     darkEnabled: false,
@@ -41,11 +41,9 @@
       textColor: null, mutedColor: null, accentColor: null,
       fontSize: 16,
       hideSections: { nav: false, sidebar: false, banner: false, footer: false },
-      siteLogo: null,
-      logoEnabled: false,
       wallpaperUrl: null,
       wallpaperOpacity: 0.15,
-      readingMode: false,
+      savedThemes: [],
     },
   };
 
@@ -84,47 +82,13 @@
      '--se-wallpaper-url', '--se-wallpaper-opacity'].forEach(v => ROOT.style.removeProperty(v));
   }
 
-  /* ── Section hide classes + reading mode ─────────────────────── */
+  /* ── Section hide classes ─────────────────────────────────────── */
   function applySectionClasses() {
     const { nav, sidebar, banner, footer } = state.custom.hideSections;
     ROOT.classList.toggle('se-hide-nav',     !!nav);
     ROOT.classList.toggle('se-hide-sidebar', !!sidebar);
     ROOT.classList.toggle('se-hide-banner',  !!banner);
     ROOT.classList.toggle('se-hide-footer',  !!footer);
-    ROOT.classList.toggle('se-reading',      !!state.custom.readingMode);
-  }
-
-  /* ── Logo swap — automatic in dark mode so the wordmark stays
-        visible; custom user logo wins when enabled. ─────────────── */
-  function swapLogos(enable) {
-    if (!enable) {
-      document.querySelectorAll('img[data-se-original]').forEach(img => {
-        img.src = img.dataset.seOriginal;
-        delete img.dataset.seOriginal;
-        delete img.dataset.seDark;
-      });
-      return;
-    }
-
-    const logoUrl = (state.custom.logoEnabled && state.custom.siteLogo)
-      ? state.custom.siteLogo
-      : chrome.runtime.getURL('assets/earn-logo-dark.png');
-
-    const seen = new Set();
-    LOGO_SELECTORS.forEach(sel => {
-      let nodes;
-      try { nodes = document.querySelectorAll(sel); } catch { return; }
-      nodes.forEach(img => {
-        if (seen.has(img)) return;
-        seen.add(img);
-        // Skip the partner "Frontier" mark and other non-Earn imagery.
-        if (img.alt && /frontier/i.test(img.alt)) return;
-        if (img.src === logoUrl) return;
-        if (!img.dataset.seOriginal) img.dataset.seOriginal = img.src;
-        img.dataset.seDark = 'true';
-        img.src = logoUrl;
-      });
-    });
   }
 
   /* ── Master apply / remove ───────────────────────────────────── */
@@ -132,8 +96,6 @@
     sessionStorage.setItem('se-dark', '1');
     ROOT.classList.add('se-dark');
     applyCustomVars();
-    applySectionClasses();
-    swapLogos(true);
     updateToolbar();
   }
 
@@ -141,13 +103,17 @@
     sessionStorage.setItem('se-dark', '0');
     ROOT.classList.remove('se-dark');
     clearCustomVars();
-    ROOT.classList.remove('se-hide-nav', 'se-hide-sidebar', 'se-hide-banner', 'se-hide-footer', 'se-reading');
-    swapLogos(false);
     updateToolbar();
   }
 
+  // Hide-sections is a declutter feature independent of the color theme
+  // (see the .se-hide-* rules in dark.css, which aren't scoped to
+  // html.se-dark), so it's applied unconditionally here rather than
+  // inside applyDark()/removeDark() — it must keep working, live, with
+  // dark mode off and without needing a page reload.
   function decide(s) {
     state = s;
+    applySectionClasses();
     if (s.darkEnabled) applyDark();
     else removeDark();
   }
@@ -200,11 +166,9 @@
         mutedColor:       stored['custom.mutedColor']       || null,
         accentColor:      stored['custom.accentColor']      || null,
         fontSize:         stored['custom.fontSize']         || 16,
-        siteLogo:         stored['custom.siteLogo']         || null,
-        logoEnabled:      stored['custom.logoEnabled']      ?? false,
         wallpaperUrl:     stored['custom.wallpaperUrl']     || null,
         wallpaperOpacity: stored['custom.wallpaperOpacity'] ?? 0.15,
-        readingMode:      stored['custom.readingMode']      ?? false,
+        savedThemes:      stored['custom.savedThemes'] || [],
         hideSections:     globalHide,
       },
     };
@@ -231,7 +195,9 @@
   /* ── In-page toolbar (quick toggle + theme menu) ─────────────── */
   const SUN_ICON  = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>';
   const MOON_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
-  const PALETTE_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r="1.5"/><circle cx="17.5" cy="10.5" r="1.5"/><circle cx="8.5" cy="7.5" r="1.5"/><circle cx="6.5" cy="12.5" r="1.5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.563-2.512 5.563-5.563C22 6.012 17.5 2 12 2z"/></svg>';
+  // Fanned color-swatch glyph — reads clearly at 18px, unlike the old
+  // stroke-only palette icon whose paint "dots" rendered as hollow rings.
+  const THEME_ICON = '<svg viewBox="0 0 24 24" fill="none"><rect x="3" y="7" width="7" height="7" rx="2" fill="currentColor" opacity="0.9" transform="rotate(-12 6.5 10.5)"/><rect x="14" y="7" width="7" height="7" rx="2" fill="currentColor" opacity="0.55" transform="rotate(12 17.5 10.5)"/><rect x="8.5" y="13" width="7" height="7" rx="2" fill="currentColor" opacity="0.75"/></svg>';
 
   // Build a fresh toolbar cluster. Class-based (no ids) so both the desktop
   // and mobile navbars can each carry their own working instance.
@@ -250,23 +216,34 @@
     menuBtn.type = 'button';
     menuBtn.title = 'Choose theme';
     menuBtn.setAttribute('aria-label', 'Choose theme');
-    menuBtn.innerHTML = PALETTE_ICON;
+    menuBtn.innerHTML = THEME_ICON;
 
     const menu = document.createElement('div');
     menu.className = 'se-tb-menu';
 
+    const presetsGrid = document.createElement('div');
+    presetsGrid.className = 'se-tb-menu-grid';
     Object.entries(PRESETS).forEach(([key, p]) => {
       const item = document.createElement('button');
       item.className = 'se-tb-menu-item';
       item.type = 'button';
       item.dataset.preset = key;
       item.innerHTML =
-        `<span class="se-tb-swatch" style="background:${p.bg};border-color:${p.border}">` +
-        `<i style="background:${p.accent}"></i></span>` +
+        `<span class="se-tb-swatch" style="--sw-bg:${p.bg};--sw-accent:${p.accent}"></span>` +
         `<span class="se-tb-name">${p.name}</span>`;
       item.addEventListener('click', (e) => { e.stopPropagation(); applyPreset(key); closeAllMenus(); });
-      menu.appendChild(item);
+      presetsGrid.appendChild(item);
     });
+    menu.appendChild(presetsGrid);
+
+    const customLabel = document.createElement('div');
+    customLabel.className = 'se-tb-menu-label';
+    customLabel.textContent = 'YOUR THEMES';
+    menu.appendChild(customLabel);
+
+    const customGrid = document.createElement('div');
+    customGrid.className = 'se-tb-menu-grid se-tb-menu-custom-grid';
+    menu.appendChild(customGrid);
 
     cluster.appendChild(toggleBtn);
     cluster.appendChild(menuBtn);
@@ -301,6 +278,82 @@
     if (mounted) updateToolbar();
   }
 
+  // Both handlers below use the cached `state` only for the dialog's
+  // default text (harmless if briefly stale) — the actual read-modify-write
+  // re-reads storage fresh right before saving, so two tabs editing themes
+  // within the same ~50ms debounce window can't clobber each other via a
+  // stale full-array overwrite.
+  function renameSavedTheme(id) {
+    const cached = (state.custom.savedThemes || []).find(x => x.id === id);
+    if (!cached) return;
+    const name = prompt('Rename theme:', cached.name);
+    if (!name || !name.trim()) return;
+    chrome.storage.local.get(['custom.savedThemes'], stored => {
+      const themes = stored['custom.savedThemes'] || [];
+      const theme = themes.find(x => x.id === id);
+      if (!theme || name.trim() === theme.name) return;
+      const updated = themes.map(x => x.id === id ? { ...x, name: name.trim() } : x);
+      chrome.storage.local.set({ 'custom.savedThemes': updated });
+    });
+  }
+
+  function deleteSavedTheme(id) {
+    const cached = (state.custom.savedThemes || []).find(x => x.id === id);
+    if (!cached || !confirm(`Delete theme "${cached.name}"?`)) return;
+    chrome.storage.local.get(['custom.savedThemes'], stored => {
+      const themes = stored['custom.savedThemes'] || [];
+      chrome.storage.local.set({ 'custom.savedThemes': themes.filter(x => x.id !== id) });
+    });
+  }
+
+  function refreshCustomThemesMenu() {
+    document.querySelectorAll('.se-tb-menu-custom-grid').forEach(grid => {
+      grid.innerHTML = '';
+      const themes = state.custom.savedThemes || [];
+      const label = grid.previousElementSibling;
+      if (label && label.classList.contains('se-tb-menu-label')) {
+        label.style.display = themes.length ? '' : 'none';
+      }
+      themes.forEach(t => {
+        const item = document.createElement('button');
+        item.className = 'se-tb-menu-item';
+        item.type = 'button';
+        item.dataset.themeId = t.id;
+
+        // Built via textContent/createElement rather than innerHTML
+        // interpolation — theme names are free-form user text (from a
+        // prompt()), so this avoids ever parsing user-entered text as HTML.
+        const swatch = document.createElement('span');
+        swatch.className = 'se-tb-swatch';
+        swatch.style.setProperty('--sw-bg', t.bg);
+        swatch.style.setProperty('--sw-accent', t.accent);
+
+        const nameEl = document.createElement('span');
+        nameEl.className = 'se-tb-name';
+        nameEl.textContent = t.name;
+
+        const row = document.createElement('span');
+        row.className = 'se-tb-menu-item-row';
+        const editEl = document.createElement('span');
+        editEl.className = 'se-tb-menu-edit';
+        editEl.title = 'Rename';
+        editEl.textContent = '✎';
+        const deleteEl = document.createElement('span');
+        deleteEl.className = 'se-tb-menu-delete';
+        deleteEl.title = 'Delete';
+        deleteEl.textContent = '×';
+        row.append(editEl, deleteEl);
+
+        item.append(swatch, nameEl, row);
+
+        item.addEventListener('click', (e) => { e.stopPropagation(); applyThemeColors(t); closeAllMenus(); });
+        editEl.addEventListener('click', (e) => { e.stopPropagation(); renameSavedTheme(t.id); });
+        deleteEl.addEventListener('click', (e) => { e.stopPropagation(); deleteSavedTheme(t.id); });
+        grid.appendChild(item);
+      });
+    });
+  }
+
   function updateToolbar() {
     const on = ROOT.classList.contains('se-dark');
     document.querySelectorAll('.se-toolbar').forEach(cluster => {
@@ -308,9 +361,12 @@
       const toggleBtn = cluster.querySelector('.se-tb-toggle');
       if (toggleBtn) toggleBtn.innerHTML = on ? MOON_ICON : SUN_ICON;
     });
+    refreshCustomThemesMenu();
     const bg = (ROOT.style.getPropertyValue('--se-bg').trim() || state.custom.bgColor || '').toLowerCase();
     document.querySelectorAll('.se-tb-menu-item').forEach(item => {
-      const p = PRESETS[item.dataset.preset];
+      const p = item.dataset.preset ? PRESETS[item.dataset.preset]
+              : item.dataset.themeId ? state.custom.savedThemes.find(t => t.id === item.dataset.themeId)
+              : null;
       item.classList.toggle('active', !!p && p.bg.toLowerCase() === bg);
     });
   }
@@ -332,17 +388,7 @@
   function applyPreset(key) {
     const p = PRESETS[key];
     if (!p) return;
-    chrome.storage.local.set({
-      'mode': 'manual',
-      'darkEnabled': true,
-      'custom.bgColor':     p.bg,
-      'custom.bg2Color':    p.bg2,
-      'custom.bg3Color':    p.bg3,
-      'custom.borderColor': p.border,
-      'custom.textColor':   p.text,
-      'custom.mutedColor':  p.muted,
-      'custom.accentColor': p.accent,
-    });
+    applyThemeColors(p);
   }
 
   /* ── Storage change listener — self-updates without messaging ── */
@@ -369,11 +415,7 @@
     clearTimeout(navTimer);
     navTimer = setTimeout(() => {
       mountToolbar();
-      if (state.darkEnabled) {
-        applyCustomVars();
-        applySectionClasses();
-        swapLogos(true);
-      }
+      applySectionClasses();
     }, 250);
   });
 

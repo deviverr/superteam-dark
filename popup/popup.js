@@ -18,14 +18,19 @@ const KEYS = {
   hideSidebar:     'custom.hideSections.sidebar',
   hideBanner:      'custom.hideSections.banner',
   hideFooter:      'custom.hideSections.footer',
-  siteLogo:        'custom.siteLogo',
-  logoEnabled:     'custom.logoEnabled',
   wallpaperUrl:    'custom.wallpaperUrl',
   wallpaperOpacity:'custom.wallpaperOpacity',
-  readingMode:     'custom.readingMode',
   pageOverrides:   'custom.pageOverrides',
+  savedThemes:     'custom.savedThemes',
 };
 
+// Used both to fill the UI when a key is missing from storage AND as the
+// factory-reset target. The color values here intentionally match the
+// GitHub preset (background/service-worker.js's own DEFAULTS uses `null`
+// for these instead, letting dark.css's hardcoded html.se-dark fallback
+// values win) — popup color <input type="color"> fields need a real hex
+// string and can't render `null`. Keep these hex values in sync with the
+// html.se-dark fallback block at the top of content/dark.css if either changes.
 const DEFAULTS = {
   [KEYS.mode]:            'manual',
   [KEYS.dark]:            false,
@@ -43,12 +48,10 @@ const DEFAULTS = {
   [KEYS.hideSidebar]:     false,
   [KEYS.hideBanner]:      false,
   [KEYS.hideFooter]:      false,
-  [KEYS.siteLogo]:        null,
-  [KEYS.logoEnabled]:     false,
   [KEYS.wallpaperUrl]:    null,
   [KEYS.wallpaperOpacity]:0.15,
-  [KEYS.readingMode]:     false,
   [KEYS.pageOverrides]:   {},
+  [KEYS.savedThemes]:     [],
 };
 
 // Full palettes — all 7 CSS vars per theme
@@ -87,8 +90,17 @@ const PRESETS = {
   },
 };
 
-// Staged changes -- only committed on Save
-let pending = {};
+// Mirrors the 7 currently-active palette values (only bg/text/accent are
+// independently editable via pickers — bg2/bg3/border/muted come from
+// whichever preset/theme was last applied). Used so "Save Current as Theme"
+// can snapshot the full palette, not just the 3 visible pickers.
+let currentPalette = {};
+
+const debounceTimers = {};
+function debouncedSave(key, value, delay = 150) {
+  clearTimeout(debounceTimers[key]);
+  debounceTimers[key] = setTimeout(() => saveAndNotify({ [key]: value }), delay);
+}
 
 function notifyTabs() {
   chrome.tabs.query({}, tabs => {
@@ -161,16 +173,25 @@ function populateUI(stored) {
   // Theme tab
   $('toggle-dark').checked = v(KEYS.dark);
   $(`mode-${v(KEYS.mode)}`).checked = true;
-  $('reading-mode').checked = v(KEYS.readingMode);
   updateToggleDisabled(v(KEYS.mode));
 
-  // Customize tab — visible color pickers (bg, text, accent)
-  const bg = v(KEYS.bgColor);
-  const tx = v(KEYS.textColor);
-  const ac = v(KEYS.accentColor);
-  $('color-bg').value    = bg; $('color-bg-text').value    = bg;
-  $('color-text').value  = tx; $('color-text-text').value  = tx;
-  $('color-accent').value = ac; $('color-accent-text').value = ac;
+  // Customize tab — full 7-slot palette, every layer directly editable
+  const bg     = v(KEYS.bgColor);
+  const bg2    = v(KEYS.bg2Color);
+  const bg3    = v(KEYS.bg3Color);
+  const border = v(KEYS.borderColor);
+  const tx     = v(KEYS.textColor);
+  const muted  = v(KEYS.mutedColor);
+  const ac     = v(KEYS.accentColor);
+  $('color-bg').value      = bg;     $('color-bg-text').value      = bg;
+  $('color-bg2').value     = bg2;    $('color-bg2-text').value     = bg2;
+  $('color-bg3').value     = bg3;    $('color-bg3-text').value     = bg3;
+  $('color-border').value  = border; $('color-border-text').value = border;
+  $('color-text').value    = tx;     $('color-text-text').value   = tx;
+  $('color-muted').value   = muted;  $('color-muted-text').value  = muted;
+  $('color-accent').value  = ac;     $('color-accent-text').value = ac;
+
+  currentPalette = { bg, bg2, bg3, border, text: tx, muted, accent: ac };
 
   // Font size
   const fs = v(KEYS.fontSize);
@@ -183,32 +204,30 @@ function populateUI(stored) {
   $('hide-banner').checked  = v(KEYS.hideBanner);
   $('hide-footer').checked  = v(KEYS.hideFooter);
 
-  // Logo
-  $('logo-enabled').checked = v(KEYS.logoEnabled);
-  const logo = v(KEYS.siteLogo);
-  if (logo) $('logo-preview').src = logo;
-
-  // Wallpaper
+  // Wallpaper — always synced (not just when a wallpaper is set), so a
+  // cleared/reset wallpaper doesn't leave a stale URL/opacity displayed
+  // from earlier in the same popup session (e.g. right after Factory Reset).
   const wpUrl = v(KEYS.wallpaperUrl);
   const wpOp  = v(KEYS.wallpaperOpacity);
-  if (wpUrl) {
-    $('wallpaper-url').value = wpUrl;
-    const pct = Math.round(wpOp * 100);
-    $('wallpaper-opacity').value = pct;
-    $('wallpaper-opacity-label').textContent = `${pct}%`;
-  }
+  $('wallpaper-url').value = wpUrl || '';
+  const pct = Math.round((wpOp ?? DEFAULTS[KEYS.wallpaperOpacity]) * 100);
+  $('wallpaper-opacity').value = pct;
+  $('wallpaper-opacity-label').textContent = `${pct}%`;
 
   // Settings tab
   $('time-start').value = v(KEYS.timeStart);
   $('time-end').value   = v(KEYS.timeEnd);
 
   syncPresetIndicator(bg, tx, ac);
-  pending = {};
 }
 
 chrome.storage.local.get(Object.values(KEYS), stored => {
   populateUI(stored);
   initPageOverrides(stored);
+});
+
+chrome.storage.local.get([KEYS.savedThemes], stored => {
+  renderCustomThemes(stored[KEYS.savedThemes] || []);
 });
 
 /* ── Dark toggle (auto-saves) ──────────────────────────────── */
@@ -231,26 +250,18 @@ function updateToggleDisabled(mode) {
   toggle.closest('.toggle').style.opacity = isManual ? '1' : '0.4';
 }
 
-/* ── Reading mode (auto-saves) ─────────────────────────────── */
-$('reading-mode').addEventListener('change', e => {
-  saveAndNotify({ [KEYS.readingMode]: e.target.checked });
-});
-
-/* ── Color pickers -- live preview only, staged for Save ───── */
-function wireColor(pickerId, textId, storageKey, cssVar) {
+/* ── Color pickers -- live-saving (debounced) + instant preview ── */
+function wireColor(pickerId, textId, storageKey, cssVar, paletteKey) {
   const picker = $(pickerId);
   const text   = $(textId);
 
   const onUpdate = val => {
     text.value   = val;
     picker.value = val;
-    pending[storageKey] = val;
+    currentPalette[paletteKey] = val;
     previewColor(cssVar, val);
-    syncPresetIndicator(
-      pending[KEYS.bgColor]     || $('color-bg').value,
-      pending[KEYS.textColor]   || $('color-text').value,
-      pending[KEYS.accentColor] || $('color-accent').value
-    );
+    debouncedSave(storageKey, val);
+    syncPresetIndicator($('color-bg').value, $('color-text').value, $('color-accent').value);
   };
 
   picker.addEventListener('input', e => onUpdate(e.target.value));
@@ -260,16 +271,20 @@ function wireColor(pickerId, textId, storageKey, cssVar) {
   });
 }
 
-wireColor('color-bg',     'color-bg-text',     KEYS.bgColor,     '--se-bg');
-wireColor('color-text',   'color-text-text',   KEYS.textColor,   '--se-text');
-wireColor('color-accent', 'color-accent-text', KEYS.accentColor, '--se-accent');
+wireColor('color-bg',     'color-bg-text',     KEYS.bgColor,     '--se-bg',         'bg');
+wireColor('color-bg2',    'color-bg2-text',    KEYS.bg2Color,    '--se-bg2',        'bg2');
+wireColor('color-bg3',    'color-bg3-text',    KEYS.bg3Color,    '--se-bg3',        'bg3');
+wireColor('color-border', 'color-border-text', KEYS.borderColor, '--se-border',     'border');
+wireColor('color-text',   'color-text-text',   KEYS.textColor,   '--se-text',       'text');
+wireColor('color-muted',  'color-muted-text',  KEYS.mutedColor,  '--se-text-muted', 'muted');
+wireColor('color-accent', 'color-accent-text', KEYS.accentColor, '--se-accent',     'accent');
 
-/* ── Font size -- staged ───────────────────────────────────── */
+/* ── Font size -- live-saving (debounced) ──────────────────── */
 $('font-size').addEventListener('input', e => {
   const val = Number(e.target.value);
   $('font-size-label').textContent = `${val}px`;
-  pending[KEYS.fontSize] = val;
   previewColor('--se-font-size', `${val}px`);
+  debouncedSave(KEYS.fontSize, val);
 });
 
 /* ── Hide section toggles -- auto-saves ────────────────────── */
@@ -283,183 +298,194 @@ wireHide('hide-sidebar', KEYS.hideSidebar);
 wireHide('hide-banner',  KEYS.hideBanner);
 wireHide('hide-footer',  KEYS.hideFooter);
 
-/* ── Logo enable toggle -- auto-saves ─────────────────────── */
-$('logo-enabled').addEventListener('change', e => {
-  saveAndNotify({ [KEYS.logoEnabled]: e.target.checked });
-});
-
-/* ── Logo upload (file) -- staged, compressed ─────────────── */
-$('logo-upload').addEventListener('change', e => {
-  const file = e.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = async ev => {
-    const compressed = await compressImage(ev.target.result, 400, 200, 0.85);
-    $('logo-preview').src = compressed;
-    pending[KEYS.siteLogo] = compressed;
-  };
-  reader.readAsDataURL(file);
-});
-
-/* ── Logo URL input -- staged ─────────────────────────────── */
-$('logo-url-set').addEventListener('click', () => {
-  const url = $('logo-url').value.trim();
-  if (!url) return;
-  $('logo-preview').src = url;
-  pending[KEYS.siteLogo] = url;
-});
-
-/* ── Logo reset -- immediate ──────────────────────────────── */
-$('logo-reset').addEventListener('click', () => {
-  $('logo-preview').src = '../assets/earn-logo-dark.png';
-  $('logo-url').value = '';
-  delete pending[KEYS.siteLogo];
-  saveAndNotify({ [KEYS.siteLogo]: null });
-});
-
-/* ── Wallpaper URL -- staged + live preview ────────────────── */
+/* ── Wallpaper URL -- live save + preview ──────────────────── */
 $('wallpaper-url-set').addEventListener('click', () => {
   const url = $('wallpaper-url').value.trim();
   if (!url) return;
-  pending[KEYS.wallpaperUrl] = url;
   previewColor('--se-wallpaper-url', `url("${url}")`);
   const currentOp = Number($('wallpaper-opacity').value) / 100;
   previewColor('--se-wallpaper-opacity', String(currentOp));
+  saveAndNotify({ [KEYS.wallpaperUrl]: url });
 });
 
-/* ── Wallpaper file -- staged, compressed ─────────────────── */
+/* ── Wallpaper file -- live save, compressed ───────────────── */
 $('wallpaper-upload').addEventListener('change', e => {
   const file = e.target.files[0];
   if (!file) return;
   const reader = new FileReader();
   reader.onload = async ev => {
     const compressed = await compressImage(ev.target.result, 1920, 1080, 0.65);
-    pending[KEYS.wallpaperUrl] = compressed;
     previewColor('--se-wallpaper-url', `url("${compressed}")`);
     const currentOp = Number($('wallpaper-opacity').value) / 100;
     previewColor('--se-wallpaper-opacity', String(currentOp));
+    saveAndNotify({ [KEYS.wallpaperUrl]: compressed });
   };
   reader.readAsDataURL(file);
 });
 
-/* ── Wallpaper opacity -- staged + live preview ────────────── */
+/* ── Wallpaper opacity -- live save + preview ──────────────── */
 $('wallpaper-opacity').addEventListener('input', e => {
   const pct = Number(e.target.value);
   const val = pct / 100;
   $('wallpaper-opacity-label').textContent = `${pct}%`;
-  pending[KEYS.wallpaperOpacity] = val;
   previewColor('--se-wallpaper-opacity', String(val));
+  debouncedSave(KEYS.wallpaperOpacity, val);
 });
 
-/* ── Wallpaper clear -- immediate ─────────────────────────── */
+/* ── Wallpaper clear -- immediate ───────────────────────────── */
 $('wallpaper-clear').addEventListener('click', () => {
   $('wallpaper-url').value = '';
-  delete pending[KEYS.wallpaperUrl];
-  delete pending[KEYS.wallpaperOpacity];
   saveAndNotify({ [KEYS.wallpaperUrl]: null });
 });
 
 /* ── Preset themes ─────────────────────────────────────────── */
-document.querySelectorAll('.preset-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const p = PRESETS[btn.dataset.preset];
-    if (!p) return;
+function applyPaletteLive(p) {
+  $('color-bg').value     = p.bg;     $('color-bg-text').value     = p.bg;
+  $('color-bg2').value    = p.bg2;    $('color-bg2-text').value    = p.bg2;
+  $('color-bg3').value    = p.bg3;    $('color-bg3-text').value    = p.bg3;
+  $('color-border').value = p.border; $('color-border-text').value = p.border;
+  $('color-text').value   = p.text;   $('color-text-text').value   = p.text;
+  $('color-muted').value  = p.muted;  $('color-muted-text').value  = p.muted;
+  $('color-accent').value = p.accent; $('color-accent-text').value = p.accent;
 
-    // Update visible color pickers
-    $('color-bg').value     = p.bg;     $('color-bg-text').value     = p.bg;
-    $('color-text').value   = p.text;   $('color-text-text').value   = p.text;
-    $('color-accent').value = p.accent; $('color-accent-text').value = p.accent;
+  currentPalette = { bg: p.bg, bg2: p.bg2, bg3: p.bg3, border: p.border, text: p.text, muted: p.muted, accent: p.accent };
 
-    // Stage ALL palette colors for Save
-    pending[KEYS.bgColor]     = p.bg;
-    pending[KEYS.bg2Color]    = p.bg2;
-    pending[KEYS.bg3Color]    = p.bg3;
-    pending[KEYS.borderColor] = p.border;
-    pending[KEYS.textColor]   = p.text;
-    pending[KEYS.mutedColor]  = p.muted;
-    pending[KEYS.accentColor] = p.accent;
+  previewFullPreset(p);
 
-    // Live preview all vars
-    previewFullPreset(p);
-
-    document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
+  saveAndNotify({
+    [KEYS.bgColor]:     p.bg,
+    [KEYS.bg2Color]:    p.bg2,
+    [KEYS.bg3Color]:    p.bg3,
+    [KEYS.borderColor]: p.border,
+    [KEYS.textColor]:   p.text,
+    [KEYS.mutedColor]:  p.muted,
+    [KEYS.accentColor]: p.accent,
   });
+
+  syncPresetIndicator(p.bg, p.text, p.accent);
+}
+
+document.querySelectorAll('.preset-btn').forEach(btn => {
+  btn.addEventListener('click', () => applyPaletteLive(PRESETS[btn.dataset.preset]));
 });
 
 function syncPresetIndicator(bg, text, accent) {
-  document.querySelectorAll('.preset-btn').forEach(btn => {
-    const p = PRESETS[btn.dataset.preset];
+  document.querySelectorAll('.preset-btn, .custom-theme-btn').forEach(btn => {
+    const p = btn.dataset.preset ? PRESETS[btn.dataset.preset] : customThemesById[btn.dataset.themeId];
     if (!p) return;
     btn.classList.toggle('active', p.bg === bg && p.text === text && p.accent === accent);
   });
 }
 
-/* ── Save button ───────────────────────────────────────────── */
-$('save-settings').addEventListener('click', () => {
-  const btn = $('save-settings');
-  const orig = btn.textContent;
+/* ── Custom themes ─────────────────────────────────────────── */
+let customThemesById = {};
 
-  const showFeedback = (ok) => {
-    btn.textContent = ok ? 'Saved!' : 'Error!';
-    btn.style.background = ok ? '#3fb950' : '#f85149';
-    btn.style.borderColor = btn.style.background;
-    setTimeout(() => {
-      btn.textContent = orig;
-      btn.style.background = '';
-      btn.style.borderColor = '';
-    }, 1400);
-  };
+function renderCustomThemes(themes) {
+  customThemesById = {};
+  const row = $('custom-theme-row');
+  row.innerHTML = '';
+  themes.forEach(t => {
+    customThemesById[t.id] = t;
+    const btn = document.createElement('button');
+    btn.className = 'preset-btn custom-theme-btn';
+    btn.dataset.themeId = t.id;
+    btn.title = t.name;
+    btn.style.setProperty('--preset-bg', t.bg);
+    btn.style.setProperty('--preset-swatch', t.accent);
 
-  if (Object.keys(pending).length > 0) {
-    const toSave = { ...pending };
-    pending = {};
-    chrome.storage.local.set(toSave)
-      .then(() => { notifyTabs(); showFeedback(true); })
-      .catch(err => {
-        console.error('[EarnDark] save failed:', err);
-        showFeedback(false);
+    const label = document.createElement('span');
+    label.textContent = t.name;
+    btn.appendChild(label);
+
+    const rename = document.createElement('span');
+    rename.className = 'custom-theme-rename';
+    rename.textContent = '✎';
+    rename.title = 'Rename theme';
+    rename.addEventListener('click', e => {
+      e.stopPropagation();
+      const name = prompt('Rename theme:', t.name);
+      if (!name || !name.trim() || name.trim() === t.name) return;
+      chrome.storage.local.get([KEYS.savedThemes], stored => {
+        const all = (stored[KEYS.savedThemes] || []).map(x => x.id === t.id ? { ...x, name: name.trim() } : x);
+        chrome.storage.local.set({ [KEYS.savedThemes]: all });
+        renderCustomThemes(all);
       });
-  } else {
-    notifyTabs();
-    showFeedback(true);
-  }
+    });
+    btn.appendChild(rename);
+
+    const del = document.createElement('span');
+    del.className = 'custom-theme-delete';
+    del.textContent = '×';
+    del.title = 'Delete theme';
+    del.addEventListener('click', e => {
+      e.stopPropagation();
+      if (!confirm(`Delete theme "${t.name}"?`)) return;
+      chrome.storage.local.get([KEYS.savedThemes], stored => {
+        const remaining = (stored[KEYS.savedThemes] || []).filter(x => x.id !== t.id);
+        chrome.storage.local.set({ [KEYS.savedThemes]: remaining });
+        renderCustomThemes(remaining);
+      });
+    });
+    btn.appendChild(del);
+
+    btn.addEventListener('click', () => applyPaletteLive(t));
+    row.appendChild(btn);
+  });
+  row.style.display = themes.length ? 'flex' : 'none';
+}
+
+$('save-custom-theme').addEventListener('click', () => {
+  const name = prompt('Name this theme:', 'My Theme');
+  if (!name || !name.trim()) return;
+  const theme = { id: 'ct-' + Date.now().toString(36), name: name.trim(), ...currentPalette };
+  chrome.storage.local.get([KEYS.savedThemes], stored => {
+    const all = [...(stored[KEYS.savedThemes] || []), theme];
+    chrome.storage.local.set({ [KEYS.savedThemes]: all });
+    renderCustomThemes(all);
+  });
 });
 
-/* ── Reload button ─────────────────────────────────────────── */
+/* ── Refresh-page button ───────────────────────────────────────
+   Re-syncs the popup UI from storage AND force-reloads the active
+   Earn tab, so it's a genuine fallback even if the live-apply path
+   (storage.onChanged in content.js) somehow hasn't caught up — hide
+   sections / page overrides are meant to apply instantly without
+   this, but this button now actually does what its label says. ── */
 $('reload-settings').addEventListener('click', () => {
   const btn = $('reload-settings');
   chrome.storage.local.get(Object.values(KEYS), stored => {
     populateUI(stored);
     notifyTabs();
-    btn.textContent = 'Reloaded';
-    setTimeout(() => { btn.textContent = '↺ Reload'; }, 1000);
+    chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
+      const tab = tabs[0];
+      if (tab && tab.url && tab.url.includes('superteam.fun')) chrome.tabs.reload(tab.id);
+    });
+    btn.textContent = 'Refreshed';
+    setTimeout(() => { btn.textContent = '↺ Refresh page'; }, 1000);
   });
 });
 
 /* ── Reset colors ──────────────────────────────────────────── */
 $('reset-colors').addEventListener('click', () => {
-  const github = PRESETS.github;
-
-  $('color-bg').value     = github.bg;     $('color-bg-text').value     = github.bg;
-  $('color-text').value   = github.text;   $('color-text-text').value   = github.text;
-  $('color-accent').value = github.accent; $('color-accent-text').value = github.accent;
+  applyPaletteLive(PRESETS.github);
   const fs = DEFAULTS[KEYS.fontSize];
   $('font-size').value = fs;
   $('font-size-label').textContent = `${fs}px`;
-
-  pending[KEYS.bgColor]     = github.bg;
-  pending[KEYS.bg2Color]    = github.bg2;
-  pending[KEYS.bg3Color]    = github.bg3;
-  pending[KEYS.borderColor] = github.border;
-  pending[KEYS.textColor]   = github.text;
-  pending[KEYS.mutedColor]  = github.muted;
-  pending[KEYS.accentColor] = github.accent;
-  pending[KEYS.fontSize]    = fs;
-
-  previewFullPreset(github);
   previewColor('--se-font-size', `${fs}px`);
-  syncPresetIndicator(github.bg, github.text, github.accent);
+  saveAndNotify({ [KEYS.fontSize]: fs });
+});
+
+/* ── Factory reset ──────────────────────────────────────────── */
+$('factory-reset').addEventListener('click', () => {
+  if (!confirm('Factory reset Superteam Earn Dark?\nThis erases all settings, custom themes, and the wallpaper.')) return;
+  chrome.storage.local.clear(() => {
+    chrome.storage.local.set(DEFAULTS, () => {
+      populateUI(DEFAULTS);
+      renderCustomThemes([]);
+      initPageOverrides(DEFAULTS);
+      notifyTabs();
+    });
+  });
 });
 
 /* ── Time inputs (auto-saves) ──────────────────────────────── */

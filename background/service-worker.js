@@ -15,12 +15,10 @@ const DEFAULTS = {
   'custom.hideSections.sidebar': false,
   'custom.hideSections.banner': false,
   'custom.hideSections.footer': false,
-  'custom.siteLogo': null,
-  'custom.logoEnabled': false,
   'custom.wallpaperUrl': null,
   'custom.wallpaperOpacity': 0.15,
-  'custom.readingMode': false,
   'custom.pageOverrides': {},
+  'custom.savedThemes': [],
 };
 
 // On install: set defaults only for keys that don't exist yet

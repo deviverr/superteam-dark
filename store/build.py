@@ -15,7 +15,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 INCLUDE = [
     "manifest.json",
     "icons/icon16.png", "icons/icon32.png", "icons/icon48.png", "icons/icon128.png",
-    "assets/earn-logo-dark.png", "assets/by_dev.png",
+    "assets/solana-dark-logo.svg",
     "background/service-worker.js",
     "content/content.js", "content/dark.css",
     "popup/popup.html", "popup/popup.css", "popup/popup.js",

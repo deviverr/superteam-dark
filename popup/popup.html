@@ -59,20 +59,6 @@
       </span>
     </label>
 
-    <!-- Reading mode -->
-    <div class="section-title">Extras</div>
-
-    <div class="row row-toggle compact">
-      <span class="row-label">
-        Reading mode
-        <span class="row-sublabel">Wider content, better line spacing</span>
-      </span>
-      <label class="toggle small">
-        <input type="checkbox" id="reading-mode" />
-        <span class="slider"></span>
-      </label>
-    </div>
-
   </section>
 
   <!-- ── Tab: Customize ─────────────────────────────────────── -->
@@ -93,14 +79,43 @@
       <button class="preset-btn" data-preset="onedark"    title="One Dark">One Dark</button>
     </div>
 
+    <!-- Custom themes -->
+    <div class="preset-row" id="custom-theme-row"></div>
+    <button class="btn-full btn-ghost" id="save-custom-theme" style="margin-top:2px">+ Save Current as Theme</button>
+
     <!-- Colors -->
-    <div class="section-title">Colors</div>
+    <div class="section-title">Colors — every surface</div>
+    <p class="settings-desc">Not seeing a change? Try "Page background" first — it's the layer behind everything else.</p>
 
     <div class="color-row">
-      <label class="color-label" for="color-bg">Background</label>
+      <label class="color-label" for="color-bg">Page background</label>
       <div class="color-input-wrap">
         <input type="color" id="color-bg" value="#0d1117" />
         <input type="text" id="color-bg-text" class="color-text" value="#0d1117" maxlength="7" />
+      </div>
+    </div>
+
+    <div class="color-row">
+      <label class="color-label" for="color-bg2">Panels &amp; nav</label>
+      <div class="color-input-wrap">
+        <input type="color" id="color-bg2" value="#161b22" />
+        <input type="text" id="color-bg2-text" class="color-text" value="#161b22" maxlength="7" />
+      </div>
+    </div>
+
+    <div class="color-row">
+      <label class="color-label" for="color-bg3">Hover &amp; inputs</label>
+      <div class="color-input-wrap">
+        <input type="color" id="color-bg3" value="#21262d" />
+        <input type="text" id="color-bg3-text" class="color-text" value="#21262d" maxlength="7" />
+      </div>
+    </div>
+
+    <div class="color-row">
+      <label class="color-label" for="color-border">Borders</label>
+      <div class="color-input-wrap">
+        <input type="color" id="color-border" value="#30363d" />
+        <input type="text" id="color-border-text" class="color-text" value="#30363d" maxlength="7" />
       </div>
     </div>
 
@@ -109,6 +124,14 @@
       <div class="color-input-wrap">
         <input type="color" id="color-text" value="#e6edf3" />
         <input type="text" id="color-text-text" class="color-text" value="#e6edf3" maxlength="7" />
+      </div>
+    </div>
+
+    <div class="color-row">
+      <label class="color-label" for="color-muted">Muted text</label>
+      <div class="color-input-wrap">
+        <input type="color" id="color-muted" value="#8b949e" />
+        <input type="text" id="color-muted-text" class="color-text" value="#8b949e" maxlength="7" />
       </div>
     </div>
 
@@ -162,31 +185,6 @@
         <input type="checkbox" id="hide-footer" />
         <span class="slider"></span>
       </label>
-    </div>
-
-    <!-- Custom logo -->
-    <div class="section-title">Custom logo</div>
-
-    <div class="row row-toggle compact">
-      <span class="row-label">Enable logo swap</span>
-      <label class="toggle small">
-        <input type="checkbox" id="logo-enabled" />
-        <span class="slider"></span>
-      </label>
-    </div>
-
-    <div class="logo-row">
-      <img id="logo-preview" src="../assets/earn-logo-dark.png" alt="logo preview" class="logo-preview" />
-      <div class="logo-actions">
-        <label class="btn-small" for="logo-upload">File</label>
-        <input type="file" id="logo-upload" accept="image/*" hidden />
-        <button class="btn-small btn-ghost" id="logo-reset">Reset</button>
-      </div>
-    </div>
-
-    <div class="url-row">
-      <input type="url" id="logo-url" class="url-input" placeholder="https://...logo.png" />
-      <button class="btn-small" id="logo-url-set">Set</button>
     </div>
 
     <!-- Wallpaper -->
@@ -253,12 +251,8 @@
       <button class="btn-full btn-ghost" id="clear-page-override" style="margin-top:4px">Clear page overrides</button>
     </div>
 
-    <!-- Save / Reload / Reset -->
-    <div class="action-row">
-      <button class="btn-half btn-ghost" id="reload-settings">↺ Reload</button>
-      <button class="btn-half btn-accent" id="save-settings">Save</button>
-    </div>
-
+    <!-- Reload / Reset -->
+    <button class="btn-full btn-ghost" id="reload-settings" style="margin-top:12px">↺ Refresh page</button>
     <button class="btn-full btn-ghost" id="reset-colors">Reset colors to defaults</button>
 
   </section>
@@ -279,14 +273,16 @@
       <input type="time" id="time-end" class="time-input" value="07:00" />
     </div>
 
+    <div class="section-title" style="margin-top:20px">Reset</div>
+    <p class="settings-desc">Erase all settings, custom themes, and the wallpaper — back to a fresh install.</p>
+    <button class="btn-full btn-danger" id="factory-reset">Factory reset</button>
+
     <div class="section-title" style="margin-top:20px">About</div>
 
     <div class="about-block">
-      <p class="settings-desc">Superteam Earn Dark v1.2.0</p>
-      <p class="settings-desc">Adds dark mode &amp; customization to superteam.fun/earn</p>
-      <a href="https://ko-fi.com/deviver" target="_blank" class="kofi-link">
-        <img src="../assets/by_dev.png" alt="by dev" class="kofi-img" />
-      </a>
+      <p class="settings-desc">Superteam Earn Dark v1.5</p>
+      <p class="settings-desc">Full customization for superteam.fun/earn — dark mode is just the start.</p>
+      <p class="settings-desc">Contributors: dev, Suurstof, Otaci</p>
     </div>
 
   </section>

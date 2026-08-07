@@ -1,12 +1,12 @@
 # Privacy Policy — Superteam Earn Dark
 
-_Last updated: 2026-06-29_
+_Last updated: 2026-08-08_
 
 **Superteam Earn Dark does not collect, transmit, or sell any personal data.**
 
 ## What the extension stores
 All of your settings — dark-mode state, selected theme/preset, custom colors,
-font size, hidden sections, per-page overrides, custom logo, and wallpaper — are
+font size, hidden sections, per-page overrides, and wallpaper — are
 saved **locally on your own device** using the browser's `chrome.storage.local`
 API. This data never leaves your machine and is never sent to us or any third
 party.
@@ -25,7 +25,7 @@ party.
 | `host_permissions: superteam.fun/earn*` | Apply the theme on Superteam Earn pages only. |
 
 ## Network
-The extension makes **no network requests**. If you set a wallpaper or logo via a
+The extension makes **no network requests**. If you set a wallpaper via a
 URL, your browser loads that image directly from the URL you provide — the
 extension does not proxy or record it.
 
@@ -33,4 +33,4 @@ extension does not proxy or record it.
 No analytics, no tracking, no ads, no external services.
 
 ## Contact
-Questions about this policy: https://ko-fi.com/deviver
+Questions about this policy: https://github.com/deviverr/superteam-dark/issues

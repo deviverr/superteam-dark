@@ -82,6 +82,8 @@ body {
   padding: 14px 16px;
   flex-direction: column;
   gap: 4px;
+  max-height: 480px;
+  overflow-y: auto;
 }
 
 .tab-panel.active { display: flex; }
@@ -228,10 +230,11 @@ body {
 .preset-btn::before {
   content: '';
   display: block;
-  width: 16px;
-  height: 8px;
-  border-radius: 3px;
-  background: var(--preset-swatch, var(--border));
+  width: 22px;
+  height: 14px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  background: linear-gradient(135deg, var(--preset-bg, var(--bg3)) 50%, var(--preset-swatch, var(--border)) 50%);
   flex-shrink: 0;
 }
 
@@ -247,15 +250,55 @@ body {
   background: var(--bg2);
 }
 
-/* Per-preset swatch colors */
-.preset-btn[data-preset="github"]     { --preset-swatch: #5522e0; }
-.preset-btn[data-preset="amoled"]     { --preset-swatch: #ffffff; }
-.preset-btn[data-preset="nord"]       { --preset-swatch: #88c0d0; }
-.preset-btn[data-preset="dracula"]    { --preset-swatch: #bd93f9; }
-.preset-btn[data-preset="catppuccin"] { --preset-swatch: #cba6f7; }
-.preset-btn[data-preset="tokyonight"] { --preset-swatch: #7aa2f7; }
-.preset-btn[data-preset="gruvbox"]    { --preset-swatch: #d3869b; }
-.preset-btn[data-preset="onedark"]    { --preset-swatch: #61afef; }
+/* Per-preset swatch colors (bg + accent, two-tone diagonal swatch) */
+.preset-btn[data-preset="github"]     { --preset-bg: #0d1117; --preset-swatch: #5522e0; }
+.preset-btn[data-preset="amoled"]     { --preset-bg: #000000; --preset-swatch: #ffffff; }
+.preset-btn[data-preset="nord"]       { --preset-bg: #2e3440; --preset-swatch: #88c0d0; }
+.preset-btn[data-preset="dracula"]    { --preset-bg: #282a36; --preset-swatch: #bd93f9; }
+.preset-btn[data-preset="catppuccin"] { --preset-bg: #1e1e2e; --preset-swatch: #cba6f7; }
+.preset-btn[data-preset="tokyonight"] { --preset-bg: #1a1b26; --preset-swatch: #7aa2f7; }
+.preset-btn[data-preset="gruvbox"]    { --preset-bg: #282828; --preset-swatch: #d3869b; }
+.preset-btn[data-preset="onedark"]    { --preset-bg: #282c34; --preset-swatch: #61afef; }
+
+.custom-theme-btn {
+  position: relative;
+}
+
+.custom-theme-delete,
+.custom-theme-rename {
+  position: absolute;
+  top: -5px;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 13px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.custom-theme-delete { right: -5px; }
+.custom-theme-rename { right: 13px; font-size: 9px; }
+
+.custom-theme-delete:hover {
+  background: #f85149;
+  border-color: #f85149;
+  color: #fff;
+}
+
+.custom-theme-rename:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+#custom-theme-row {
+  flex-wrap: wrap;
+  display: none; /* toggled to flex by renderCustomThemes() when non-empty */
+}
 
 /* ── Color rows ────────────────────────────────────────────── */
 .color-row {
@@ -320,25 +363,6 @@ input[type="color"] {
   flex: 1;
   accent-color: var(--accent);
   cursor: pointer;
-}
-
-/* ── Logo row ──────────────────────────────────────────────── */
-.logo-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 5px 0;
-}
-
-.logo-preview {
-  height: 28px;
-  width: auto;
-  max-width: 90px;
-  object-fit: contain;
-  background: #ffffff;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 4px 8px;
 }
 
 .logo-actions {
@@ -438,6 +462,17 @@ input[type="color"] {
 
 .btn-full:hover { color: var(--text); border-color: var(--text); }
 
+.btn-danger {
+  color: #f85149;
+  border-color: #4a2224;
+}
+
+.btn-danger:hover {
+  color: #fff;
+  background: #f85149;
+  border-color: #f85149;
+}
+
 /* ── Settings tab ──────────────────────────────────────────── */
 .settings-desc {
   font-size: 12px;
@@ -483,26 +518,10 @@ input[type="color"] {
   vertical-align: middle;
 }
 
-/* ── About block with ko-fi ────────────────────────────────── */
+/* ── About block ──────────────────────────────────────────── */
 .about-block {
   display: flex;
   flex-direction: column;
   gap: 3px;
   padding-bottom: 4px;
-}
-
-.kofi-link {
-  display: inline-flex;
-  margin-top: 10px;
-  opacity: 0.65;
-  transition: opacity 0.15s;
-  text-decoration: none;
-  align-self: flex-start;
-}
-
-.kofi-link:hover { opacity: 1; }
-
-.kofi-img {
-  height: 40px;
-  width: auto;
 }

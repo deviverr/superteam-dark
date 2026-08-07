@@ -3,7 +3,7 @@
 const sharp = require('sharp');
 const path = require('path');
 
-const src = path.join(__dirname, 'assets', 'square-logo-dark.png');
+const src = path.join(__dirname, 'earn_dark_icon_v3.png');
 const sizes = [16, 32, 48, 128];
 
 Promise.all(
