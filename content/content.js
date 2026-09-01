@@ -19,7 +19,7 @@
   // Shared preset palettes — keep in sync with popup.js PRESETS.
   const PRESETS = {
     github:     { name: 'GitHub',     bg: '#0d1117', bg2: '#161b22', bg3: '#21262d', border: '#30363d', text: '#e6edf3', muted: '#8b949e', accent: '#5522e0' },
-    amoled:     { name: 'AMOLED',     bg: '#000000', bg2: '#0a0a0a', bg3: '#111111', border: '#1c1c1c', text: '#f0f0f0', muted: '#9a9a9a', accent: '#5522e0' },
+    amoled:     { name: 'AMOLED',     bg: '#000000', bg2: '#000000', bg3: '#000000', border: '#242424', text: '#f0f0f0', muted: '#9a9a9a', accent: '#5522e0' },
     nord:       { name: 'Nord',       bg: '#2e3440', bg2: '#3b4252', bg3: '#434c5e', border: '#4c566a', text: '#eceff4', muted: '#d8dee9', accent: '#88c0d0' },
     dracula:    { name: 'Dracula',    bg: '#282a36', bg2: '#1e1f29', bg3: '#44475a', border: '#6272a4', text: '#f8f8f2', muted: '#b2bade', accent: '#bd93f9' },
     catppuccin: { name: 'Catppuccin', bg: '#1e1e2e', bg2: '#181825', bg3: '#313244', border: '#45475a', text: '#cdd6f4', muted: '#a6adc8', accent: '#cba6f7' },
@@ -167,7 +167,16 @@
       ['--se-accent', '--se-accent-fg', '--se-accent-text', '--se-link']
         .forEach(v => ROOT.style.removeProperty(v));
     }
-    ROOT.style.setProperty('--se-font-size', `${c.fontSize || 16}px`);
+    /* Font size ships as BOTH an absolute px value and a scale factor.
+       The px var alone only ever moved elements that inherit from body —
+       on Earn that is almost nothing, because every text node carries a
+       Tailwind text-* utility with a hardcoded rem size, which wins. The
+       scale factor lets dark.css re-express each of those utilities as
+       `calc(<its rem> * var(--se-font-scale))`, so the slider moves the
+       whole page instead of just the welcome banner. */
+    const fontPx = c.fontSize || 16;
+    ROOT.style.setProperty('--se-font-size', `${fontPx}px`);
+    ROOT.style.setProperty('--se-font-scale', String(fontPx / 16));
 
     // The wallpaper needs the page's own opaque surfaces switched off
     // (see the .se-wallpaper block in dark.css), so it's a class, not
@@ -186,7 +195,7 @@
   function clearCustomVars() {
     ['--se-bg', '--se-bg2', '--se-bg3', '--se-border', '--se-text', '--se-text-muted',
      '--se-accent', '--se-accent-fg', '--se-accent-text', '--se-link', '--se-font-size',
-     '--se-wallpaper-url', '--se-wallpaper-opacity'].forEach(v => ROOT.style.removeProperty(v));
+     '--se-font-scale', '--se-wallpaper-url', '--se-wallpaper-opacity'].forEach(v => ROOT.style.removeProperty(v));
     ROOT.classList.remove('se-wallpaper');
   }
 
@@ -211,6 +220,20 @@
     ROOT.classList.toggle('se-hide-sidebar', !!sidebar);
     ROOT.classList.toggle('se-hide-banner',  !!banner);
     ROOT.classList.toggle('se-hide-footer',  !!footer);
+    syncFloatingToolbar(!!nav);
+  }
+
+  // Hiding the nav hides the toolbar with it, which would leave no in-page
+  // way back to light mode. So when nav-hiding is on, keep one toolbar
+  // pinned to the viewport instead.
+  function syncFloatingToolbar(navHidden) {
+    const existing = document.querySelector('.se-toolbar-floating');
+    if (!navHidden) { if (existing) existing.remove(); return; }
+    if (existing || !document.body) return;
+    const cluster = buildToolbar();
+    cluster.classList.add('se-toolbar-floating');
+    document.body.appendChild(cluster);
+    updateToolbar();
   }
 
   /* ── Master apply / remove ───────────────────────────────────── */
@@ -270,9 +293,16 @@
       footer:  stored['custom.hideSections.footer']  ?? false,
     };
 
+    // Only keys the override actually carries are merged. The popup now
+    // stores just the differences from the globals (see savePageOverride),
+    // so an absent key means "follow the global switch" rather than "off".
     const overrides = stored['custom.pageOverrides'] || {};
     const pageOv = overrides[getPageGroup()];
-    if (pageOv && pageOv.hideSections) Object.assign(globalHide, pageOv.hideSections);
+    if (pageOv && pageOv.hideSections) {
+      for (const [k, val] of Object.entries(pageOv.hideSections)) {
+        if (typeof val === 'boolean' && k in globalHide) globalHide[k] = val;
+      }
+    }
 
     return {
       mode: stored.mode || 'manual',
@@ -317,13 +347,34 @@
   /* ── In-page toolbar (quick toggle + theme menu) ─────────────── */
   const SUN_ICON  = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>';
   const MOON_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
-  // Three colour swatches fanned in a row. The previous glyph stacked
-  // them in a triangle at three different opacities, which at 18px just
-  // read as three grey blobs of no particular shape; a single row at one
-  // opacity reads as paint chips, and the slight outward fan keeps it
-  // from looking like a plain column/menu icon. It also matches the
-  // two-tone swatch chips used by the menu items it opens.
-  const THEME_ICON = '<svg viewBox="0 0 24 24" fill="none"><rect x="2.5" y="6.5" width="5" height="11" rx="1.6" fill="currentColor" transform="rotate(-10 5 12)"/><rect x="9.5" y="5.5" width="5" height="13" rx="1.6" fill="currentColor"/><rect x="16.5" y="6.5" width="5" height="11" rx="1.6" fill="currentColor" transform="rotate(10 19 12)"/></svg>';
+  /* Theme button glyph — three stacked horizontal bars in a live accent
+     gradient, staggered in width. The previous glyph was three vertical
+     paint chips, which at 18px read as three grey blobs of no particular
+     shape and looked bolted on next to Earn's flat line icons. Bars in a
+     gradient read as "theme sliders" instantly, and because the stops are
+     the palette's own --se-accent / --se-accent-text, the button restains
+     itself the moment a preset is applied — no repaint code needed.
+     Every instance needs its OWN gradient id: two toolbars (desktop +
+     mobile) sharing one id is a duplicate-id document, and the second
+     fill would resolve against the first toolbar's def, which breaks the
+     moment that toolbar is removed on an SPA re-render. */
+  let themeIconSeq = 0;
+  function themeIcon() {
+    const id = `se-tb-grad-${++themeIconSeq}`;
+    return (
+      `<svg viewBox="0 0 24 24" fill="none">` +
+        `<defs>` +
+          `<linearGradient id="${id}" x1="3" y1="0" x2="21" y2="0" gradientUnits="userSpaceOnUse">` +
+            `<stop offset="0" stop-color="var(--se-accent, #5522e0)"/>` +
+            `<stop offset="1" stop-color="var(--se-accent-text, #a78bfa)"/>` +
+          `</linearGradient>` +
+        `</defs>` +
+        `<rect x="3" y="4.75"  width="18"   height="3.5" rx="1.75" fill="url(#${id})"/>` +
+        `<rect x="3" y="10.25" width="13.5" height="3.5" rx="1.75" fill="url(#${id})" opacity=".85"/>` +
+        `<rect x="3" y="15.75" width="9"    height="3.5" rx="1.75" fill="url(#${id})" opacity=".7"/>` +
+      `</svg>`
+    );
+  }
 
   // Build a fresh toolbar cluster. Class-based (no ids) so both the desktop
   // and mobile navbars can each carry their own working instance.
@@ -342,7 +393,7 @@
     menuBtn.type = 'button';
     menuBtn.title = 'Choose theme';
     menuBtn.setAttribute('aria-label', 'Choose theme');
-    menuBtn.innerHTML = THEME_ICON;
+    menuBtn.innerHTML = themeIcon();
 
     const menu = document.createElement('div');
     menu.className = 'se-tb-menu';
@@ -421,6 +472,7 @@
       target.appendChild(buildToolbar());
       mounted = true;
     });
+    if (state.custom.hideSections.nav) syncFloatingToolbar(true);
     if (mounted) updateToolbar();
   }
 
@@ -601,6 +653,12 @@
       // that only pushed the raw accent would leave CTAs and accent text
       // showing the previous palette's contrast correction until save.
       if (msg.key === '--se-accent' || msg.key === '--se-bg') refreshDerivedAccentVars();
+      // --se-font-scale is what actually moves Tailwind's text-* utilities
+      // (see applyCustomVars), so a preview that only pushed the px var
+      // would leave the page size unchanged until the debounced save.
+      if (msg.key === '--se-font-size') {
+        ROOT.style.setProperty('--se-font-scale', String((parseFloat(msg.value) || 16) / 16));
+      }
       // Wallpaper visibility is gated on the class, not just the URL var
       // (it has to switch the page's opaque surfaces off), so a previewed
       // wallpaper needs the class toggled here too or nothing shows until

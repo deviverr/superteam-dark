@@ -1,6 +1,22 @@
 /* ── Helpers ────────────────────────────────────────────────── */
 const $ = id => document.getElementById(id);
 
+/* Which page group the active tab is on ('home', 'bounties', …). Declared
+   up here rather than beside the per-page override code further down: the
+   first thing the popup does on open is call initPageOverrides(), which
+   reads and writes this — and a `let` declared after that call sits in the
+   temporal dead zone at that moment. The result was an uncaught
+   "Cannot access 'currentPageGroup' before initialization" that aborted
+   the rest of popup init, which is why the per-page override toggles never
+   reflected what was stored and appeared to do nothing. */
+let currentPageGroup = null;
+
+/* Saved themes keyed by id, rebuilt by renderCustomThemes(). Hoisted here
+   for the same reason as currentPageGroup above — syncPresetIndicator()
+   runs during the popup's first paint, before the declaration's original
+   position further down. */
+let customThemesById = {};
+
 const KEYS = {
   mode:            'mode',
   dark:            'darkEnabled',
@@ -31,6 +47,17 @@ const KEYS = {
 // values win) — popup color <input type="color"> fields need a real hex
 // string and can't render `null`. Keep these hex values in sync with the
 // html.se-dark fallback block at the top of content/dark.css if either changes.
+/* Per-page override fields: [override key, checkbox id, matching global
+   storage key]. Declared here, above every consumer, because the popup runs
+   initPageOverrides() during its first storage callback — a `const` sitting
+   further down the file is in the temporal dead zone at that point. */
+const HIDE_FIELDS = [
+  ['nav',     'page-hide-nav',     KEYS.hideNav],
+  ['sidebar', 'page-hide-sidebar', KEYS.hideSidebar],
+  ['banner',  'page-hide-banner',  KEYS.hideBanner],
+  ['footer',  'page-hide-footer',  KEYS.hideFooter],
+];
+
 const DEFAULTS = {
   [KEYS.mode]:            'manual',
   [KEYS.dark]:            false,
@@ -60,9 +87,12 @@ const PRESETS = {
     bg: '#0d1117', bg2: '#161b22', bg3: '#21262d',
     border: '#30363d', text: '#e6edf3', muted: '#8b949e', accent: '#5522e0',
   },
+  // True OLED black: every surface is #000 so unlit pixels stay unlit.
+  // Depth comes entirely from the border colour — keep it in sync with the
+  // copy in content.js PRESETS.
   amoled: {
-    bg: '#000000', bg2: '#0a0a0a', bg3: '#111111',
-    border: '#1c1c1c', text: '#f0f0f0', muted: '#9a9a9a', accent: '#5522e0',
+    bg: '#000000', bg2: '#000000', bg3: '#000000',
+    border: '#242424', text: '#f0f0f0', muted: '#9a9a9a', accent: '#5522e0',
   },
   nord: {
     bg: '#2e3440', bg2: '#3b4252', bg3: '#434c5e',
@@ -455,8 +485,6 @@ function syncPresetIndicator(bg, text, accent) {
 }
 
 /* ── Custom themes ─────────────────────────────────────────── */
-let customThemesById = {};
-
 function renderCustomThemes(themes) {
   customThemesById = {};
   const row = $('custom-theme-row');
@@ -578,7 +606,6 @@ $('time-end').addEventListener('change', e => {
 });
 
 /* ── Per-page overrides ────────────────────────────────────── */
-let currentPageGroup = null;
 
 function getPageGroupFromUrl(url) {
   try {
@@ -607,33 +634,38 @@ function initPageOverrides(stored) {
       label.textContent = '';
       $('page-override-section').style.display = 'none';
     }
-    renderPageOverrides(stored[KEYS.pageOverrides] || {});
+    renderPageOverrides(stored[KEYS.pageOverrides] || {}, stored);
   });
 }
 
-function renderPageOverrides(overrides) {
+/* A per-page box shows the global value unless this page group actually
+   overrides it, so an unedited page tracks the global toggles. */
+function renderPageOverrides(overrides, globals) {
   if (!currentPageGroup) return;
-  const ov = overrides[currentPageGroup] || {};
-  const hs = ov.hideSections || {};
-  $('page-hide-nav').checked     = hs.nav     ?? false;
-  $('page-hide-sidebar').checked = hs.sidebar  ?? false;
-  $('page-hide-banner').checked  = hs.banner   ?? false;
-  $('page-hide-footer').checked  = hs.footer   ?? false;
+  const hs = (overrides[currentPageGroup] || {}).hideSections || {};
+  HIDE_FIELDS.forEach(([key, id, globalKey]) => {
+    $(id).checked = hs[key] ?? !!(globals || {})[globalKey];
+  });
 }
 
+/* Only genuine DIFFERENCES from the global setting are stored, and a group
+   that matches the globals everywhere is deleted outright.
+   Storing all four keys unconditionally (what this used to do) meant the
+   first touch of any per-page toggle froze that page group against the
+   global switches forever: content.js merges the override over the globals,
+   so a stored `nav: false` kept beating a later global "hide nav" and the
+   global toggle looked broken on every page the user had ever visited. */
 function savePageOverride() {
   if (!currentPageGroup) return;
-  const ov = {
-    hideSections: {
-      nav:     $('page-hide-nav').checked,
-      sidebar: $('page-hide-sidebar').checked,
-      banner:  $('page-hide-banner').checked,
-      footer:  $('page-hide-footer').checked,
-    },
-  };
-  chrome.storage.local.get([KEYS.pageOverrides], stored => {
+  chrome.storage.local.get([KEYS.pageOverrides, ...HIDE_FIELDS.map(f => f[2])], stored => {
     const all = stored[KEYS.pageOverrides] || {};
-    all[currentPageGroup] = ov;
+    const hideSections = {};
+    HIDE_FIELDS.forEach(([key, id, globalKey]) => {
+      const checked = $(id).checked;
+      if (checked !== !!stored[globalKey]) hideSections[key] = checked;
+    });
+    if (Object.keys(hideSections).length) all[currentPageGroup] = { hideSections };
+    else delete all[currentPageGroup];
     saveAndNotify({ [KEYS.pageOverrides]: all });
   });
 }
@@ -648,6 +680,6 @@ $('clear-page-override').addEventListener('click', () => {
     const all = stored[KEYS.pageOverrides] || {};
     delete all[currentPageGroup];
     saveAndNotify({ [KEYS.pageOverrides]: all });
-    renderPageOverrides(all);
+    chrome.storage.local.get(HIDE_FIELDS.map(f => f[2]), globals => renderPageOverrides(all, globals));
   });
 });

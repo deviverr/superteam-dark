@@ -156,9 +156,13 @@ html.se-dark div[class~="bg-white"] {
 }
 
 /* ── Hover states ───────────────────────────────────────────── */
+/* Lifted off --se-bg3 rather than equal to it. On AMOLED every surface
+   is #000, so a hover that just paints --se-bg3 is invisible; mixing a
+   little --se-text in gives a visible lift on AMOLED while staying a
+   subtle step above the panel colour on every other preset. */
 html.se-dark .hover\:bg-gray-100:hover,
 html.se-dark .hover\:bg-slate-100:hover {
-  background-color: var(--se-bg3) !important;
+  background-color: color-mix(in srgb, var(--se-text) 9%, var(--se-bg3)) !important;
 }
 
 html.se-dark .hover\:bg-indigo-100:hover,
@@ -166,12 +170,9 @@ html.se-dark .hover\:bg-indigo-200:hover {
   background-color: color-mix(in srgb, var(--se-accent) 15%, transparent) !important;
 }
 
-html.se-dark .hover\:bg-slate-50:hover {
-  background-color: var(--se-bg2) !important;
-}
-
+html.se-dark .hover\:bg-slate-50:hover,
 html.se-dark .hover\:bg-white:hover {
-  background-color: var(--se-bg2) !important;
+  background-color: color-mix(in srgb, var(--se-text) 7%, var(--se-bg2)) !important;
 }
 
 /* ── Text — per-shade mapping (exact token match, see note above) ── */
@@ -276,6 +277,15 @@ html.se-dark select {
   color: var(--se-text) !important;
 }
 
+/* On AMOLED the input fill equals the page, so the border is the only
+   thing that makes the field a field — make sure one is always drawn. */
+html.se-dark input:not([type="radio"]):not([type="checkbox"]):not([type="range"]):not([type="color"]),
+html.se-dark textarea,
+html.se-dark select {
+  border-width: 1px !important;
+  border-style: solid !important;
+}
+
 html.se-dark input::placeholder,
 html.se-dark textarea::placeholder {
   color: var(--se-text-muted) !important;
@@ -310,9 +320,14 @@ html.se-dark .hover\:text-brand-purple:hover {
 /* Generic buttons that aren't branded.
    :not([class*="se-tb"]) excludes our own toolbar buttons — this rule is
    !important and would otherwise flatten the sun/moon toggle's amber and
-   violet state colours to plain --se-text. */
-html.se-dark button:not([class*="bg-brand"]):not([class*="bg-indigo"]):not([class*="bg-red"]):not([class*="se-tb"]),
-html.se-dark [role="button"]:not([class*="se-tb"]) {
+   violet state colours to plain --se-text.
+   :not([data-slot="carousel-item"] *) excludes the home hero slides, whose
+   CTAs are part of the artwork: the sponsor slide's "Get Started" is white
+   text on its own black fill, and the "Sign Up" CTA is #3223A0 on white.
+   Both were being repainted --se-text, which is light — so one lost its
+   contrast against black and the other vanished into the white pill. */
+html.se-dark button:not([class*="bg-brand"]):not([class*="bg-indigo"]):not([class*="bg-red"]):not([class*="se-tb"]):not([data-slot="carousel-item"] *),
+html.se-dark [role="button"]:not([class*="se-tb"]):not([data-slot="carousel-item"] *) {
   color: var(--se-text) !important;
 }
 
@@ -533,22 +548,52 @@ html.se-dark ::selection {
    Deliberately NOT scoped to html.se-dark — hiding the nav/sidebar/
    banner/footer is a declutter feature independent of the color theme,
    so it must keep working when dark mode is off too. Applies instantly
-   via classList.toggle in content.js; no page reload involved. */
+   via classList.toggle in content.js; no page reload involved.
+
+   These used to be written against semantic tags (nav, header, aside)
+   and *"sidebar"/*"banner" class substrings. Earn ships NONE of those:
+   its navbar is a pair of `div.sticky.top-0` wrappers (z-40 desktop,
+   z-50 mobile), its right rail is an unnamed `div.w-96.flex-col`, and
+   its promo blocks carry no "banner" token — so three of the four
+   toggles matched zero elements and appeared to do nothing, before or
+   after a reload. Only `footer` was ever real. The selectors below are
+   written against the structure Earn actually renders, with the old
+   semantic/substring selectors kept as a forward-compatible fallback
+   in case the markup gains them. */
+
+/* Nav — both sticky navbar wrappers. content.js re-mounts the toolbar as
+   a floating control when this is on, so dark mode stays togglable. */
 html.se-hide-nav nav,
-html.se-hide-nav header {
+html.se-hide-nav header,
+html.se-hide-nav div.sticky.top-0 {
   display: none !important;
 }
 
+/* Sidebar — Earn's right rail is `div.hidden.lg:flex > div.w-96.flex-col`.
+   Hiding the inner column alone leaves the empty flex parent still
+   claiming its gap, so prefer the parent via :has() (Chrome 105+) and
+   fall back to the column itself. */
 html.se-hide-sidebar aside,
 html.se-hide-sidebar [class*="sidebar"],
-html.se-hide-sidebar [class*="Sidebar"] {
+html.se-hide-sidebar [class*="Sidebar"],
+html.se-hide-sidebar div:has(> div.w-96.flex-col),
+html.se-hide-sidebar div.w-96.flex-col {
   display: none !important;
 }
 
+/* Banners — the welcome/hero strip, the promo cards, and any genuinely
+   named announcement bar. The hero is identified by the combination
+   Earn uses for it (a full-width rounded gradient strip), not by a
+   substring, so ordinary gradient buttons and pills are left alone. */
 html.se-hide-banner [class*="banner"],
 html.se-hide-banner [class*="Banner"],
 html.se-hide-banner [class*="announcement"],
-html.se-hide-banner [class*="alert"] {
+html.se-hide-banner [class*="alert"],
+html.se-hide-banner div[class*="rounded-xl"][class*="bg-linear-to-r"],
+html.se-hide-banner div[class*="rounded-xl"][class*="bg-gradient-to-r"],
+html.se-hide-banner a:has(img[src*="banner"]),
+html.se-hide-banner div:has(> img[src*="banner"]),
+html.se-hide-banner [data-slot="carousel"] {
   display: none !important;
 }
 
@@ -558,9 +603,240 @@ html.se-hide-footer [class*="Footer"] {
   display: none !important;
 }
 
-/* ── Custom font size ───────────────────────────────────────── */
+/* The floating toolbar is the only thing allowed to survive a hidden
+   nav — it is what puts dark mode back on. */
+html.se-hide-nav .se-toolbar-floating {
+  display: flex !important;
+}
+
+/* ── Custom font size ─────────────────────────────────────────
+   The slider used to set nothing but `font-size` on <body>, which on Earn
+   moved almost nothing: every text node carries a Tailwind text-* utility
+   with a hardcoded rem size, and that wins over an inherited body value.
+   The only things that visibly resized were the handful of elements with
+   no text utility at all — which is why the welcome banner appeared to be
+   the only thing the slider controlled.
+   So re-express each text utility Earn actually ships as its own rem size
+   multiplied by --se-font-scale (fontSize / 16, set in content.js). Both
+   font-size and line-height scale, so leading stays proportional instead
+   of going cramped at the top of the range.
+   Responsive variants are declared inside their own breakpoint so a
+   md:text-base doesn't leak down to mobile; the breakpoints are Tailwind's
+   defaults (sm 40rem, md 48rem, lg 64rem, xl 80rem).
+   The px var is kept for <body> so untagged text scales too. */
 html.se-dark body {
   font-size: var(--se-font-size, 16px) !important;
+}
+html.se-dark .text-xxs {
+  font-size: calc(0.625rem * var(--se-font-scale, 1)) !important;
+  line-height: calc(0.875rem * var(--se-font-scale, 1)) !important;
+}
+html.se-dark .text-xs {
+  font-size: calc(0.75rem * var(--se-font-scale, 1)) !important;
+  line-height: calc(1rem * var(--se-font-scale, 1)) !important;
+}
+html.se-dark .text-sm {
+  font-size: calc(0.875rem * var(--se-font-scale, 1)) !important;
+  line-height: calc(1.25rem * var(--se-font-scale, 1)) !important;
+}
+html.se-dark .text-base {
+  font-size: calc(1rem * var(--se-font-scale, 1)) !important;
+  line-height: calc(1.5rem * var(--se-font-scale, 1)) !important;
+}
+html.se-dark .text-lg {
+  font-size: calc(1.125rem * var(--se-font-scale, 1)) !important;
+  line-height: calc(1.75rem * var(--se-font-scale, 1)) !important;
+}
+html.se-dark .text-xl {
+  font-size: calc(1.25rem * var(--se-font-scale, 1)) !important;
+  line-height: calc(1.75rem * var(--se-font-scale, 1)) !important;
+}
+html.se-dark .text-2xl {
+  font-size: calc(1.5rem * var(--se-font-scale, 1)) !important;
+  line-height: calc(2rem * var(--se-font-scale, 1)) !important;
+}
+html.se-dark .text-3xl {
+  font-size: calc(1.875rem * var(--se-font-scale, 1)) !important;
+  line-height: calc(2.25rem * var(--se-font-scale, 1)) !important;
+}
+html.se-dark .text-4xl {
+  font-size: calc(2.25rem * var(--se-font-scale, 1)) !important;
+  line-height: calc(2.5rem * var(--se-font-scale, 1)) !important;
+}
+html.se-dark .text-5xl {
+  font-size: calc(3rem * var(--se-font-scale, 1)) !important;
+}
+html.se-dark .text-\[0\.8rem\] {
+  font-size: calc(0.8rem * var(--se-font-scale, 1)) !important;
+  line-height: calc(1.15rem * var(--se-font-scale, 1)) !important;
+}
+
+@media (min-width: 40rem) {
+  html.se-dark .sm\:text-xxs {
+    font-size: calc(0.625rem * var(--se-font-scale, 1)) !important;
+    line-height: calc(0.875rem * var(--se-font-scale, 1)) !important;
+  }
+  html.se-dark .sm\:text-xs {
+    font-size: calc(0.75rem * var(--se-font-scale, 1)) !important;
+    line-height: calc(1rem * var(--se-font-scale, 1)) !important;
+  }
+  html.se-dark .sm\:text-sm {
+    font-size: calc(0.875rem * var(--se-font-scale, 1)) !important;
+    line-height: calc(1.25rem * var(--se-font-scale, 1)) !important;
+  }
+  html.se-dark .sm\:text-base {
+    font-size: calc(1rem * var(--se-font-scale, 1)) !important;
+    line-height: calc(1.5rem * var(--se-font-scale, 1)) !important;
+  }
+  html.se-dark .sm\:text-lg {
+    font-size: calc(1.125rem * var(--se-font-scale, 1)) !important;
+    line-height: calc(1.75rem * var(--se-font-scale, 1)) !important;
+  }
+  html.se-dark .sm\:text-xl {
+    font-size: calc(1.25rem * var(--se-font-scale, 1)) !important;
+    line-height: calc(1.75rem * var(--se-font-scale, 1)) !important;
+  }
+  html.se-dark .sm\:text-2xl {
+    font-size: calc(1.5rem * var(--se-font-scale, 1)) !important;
+    line-height: calc(2rem * var(--se-font-scale, 1)) !important;
+  }
+  html.se-dark .sm\:text-3xl {
+    font-size: calc(1.875rem * var(--se-font-scale, 1)) !important;
+    line-height: calc(2.25rem * var(--se-font-scale, 1)) !important;
+  }
+  html.se-dark .sm\:text-4xl {
+    font-size: calc(2.25rem * var(--se-font-scale, 1)) !important;
+    line-height: calc(2.5rem * var(--se-font-scale, 1)) !important;
+  }
+  html.se-dark .sm\:text-5xl {
+    font-size: calc(3rem * var(--se-font-scale, 1)) !important;
+  }
+}
+
+@media (min-width: 48rem) {
+  html.se-dark .md\:text-xxs {
+    font-size: calc(0.625rem * var(--se-font-scale, 1)) !important;
+    line-height: calc(0.875rem * var(--se-font-scale, 1)) !important;
+  }
+  html.se-dark .md\:text-xs {
+    font-size: calc(0.75rem * var(--se-font-scale, 1)) !important;
+    line-height: calc(1rem * var(--se-font-scale, 1)) !important;
+  }
+  html.se-dark .md\:text-sm {
+    font-size: calc(0.875rem * var(--se-font-scale, 1)) !important;
+    line-height: calc(1.25rem * var(--se-font-scale, 1)) !important;
+  }
+  html.se-dark .md\:text-base {
+    font-size: calc(1rem * var(--se-font-scale, 1)) !important;
+    line-height: calc(1.5rem * var(--se-font-scale, 1)) !important;
+  }
+  html.se-dark .md\:text-lg {
+    font-size: calc(1.125rem * var(--se-font-scale, 1)) !important;
+    line-height: calc(1.75rem * var(--se-font-scale, 1)) !important;
+  }
+  html.se-dark .md\:text-xl {
+    font-size: calc(1.25rem * var(--se-font-scale, 1)) !important;
+    line-height: calc(1.75rem * var(--se-font-scale, 1)) !important;
+  }
+  html.se-dark .md\:text-2xl {
+    font-size: calc(1.5rem * var(--se-font-scale, 1)) !important;
+    line-height: calc(2rem * var(--se-font-scale, 1)) !important;
+  }
+  html.se-dark .md\:text-3xl {
+    font-size: calc(1.875rem * var(--se-font-scale, 1)) !important;
+    line-height: calc(2.25rem * var(--se-font-scale, 1)) !important;
+  }
+  html.se-dark .md\:text-4xl {
+    font-size: calc(2.25rem * var(--se-font-scale, 1)) !important;
+    line-height: calc(2.5rem * var(--se-font-scale, 1)) !important;
+  }
+  html.se-dark .md\:text-5xl {
+    font-size: calc(3rem * var(--se-font-scale, 1)) !important;
+  }
+}
+
+@media (min-width: 64rem) {
+  html.se-dark .lg\:text-xxs {
+    font-size: calc(0.625rem * var(--se-font-scale, 1)) !important;
+    line-height: calc(0.875rem * var(--se-font-scale, 1)) !important;
+  }
+  html.se-dark .lg\:text-xs {
+    font-size: calc(0.75rem * var(--se-font-scale, 1)) !important;
+    line-height: calc(1rem * var(--se-font-scale, 1)) !important;
+  }
+  html.se-dark .lg\:text-sm {
+    font-size: calc(0.875rem * var(--se-font-scale, 1)) !important;
+    line-height: calc(1.25rem * var(--se-font-scale, 1)) !important;
+  }
+  html.se-dark .lg\:text-base {
+    font-size: calc(1rem * var(--se-font-scale, 1)) !important;
+    line-height: calc(1.5rem * var(--se-font-scale, 1)) !important;
+  }
+  html.se-dark .lg\:text-lg {
+    font-size: calc(1.125rem * var(--se-font-scale, 1)) !important;
+    line-height: calc(1.75rem * var(--se-font-scale, 1)) !important;
+  }
+  html.se-dark .lg\:text-xl {
+    font-size: calc(1.25rem * var(--se-font-scale, 1)) !important;
+    line-height: calc(1.75rem * var(--se-font-scale, 1)) !important;
+  }
+  html.se-dark .lg\:text-2xl {
+    font-size: calc(1.5rem * var(--se-font-scale, 1)) !important;
+    line-height: calc(2rem * var(--se-font-scale, 1)) !important;
+  }
+  html.se-dark .lg\:text-3xl {
+    font-size: calc(1.875rem * var(--se-font-scale, 1)) !important;
+    line-height: calc(2.25rem * var(--se-font-scale, 1)) !important;
+  }
+  html.se-dark .lg\:text-4xl {
+    font-size: calc(2.25rem * var(--se-font-scale, 1)) !important;
+    line-height: calc(2.5rem * var(--se-font-scale, 1)) !important;
+  }
+  html.se-dark .lg\:text-5xl {
+    font-size: calc(3rem * var(--se-font-scale, 1)) !important;
+  }
+}
+
+@media (min-width: 80rem) {
+  html.se-dark .xl\:text-xxs {
+    font-size: calc(0.625rem * var(--se-font-scale, 1)) !important;
+    line-height: calc(0.875rem * var(--se-font-scale, 1)) !important;
+  }
+  html.se-dark .xl\:text-xs {
+    font-size: calc(0.75rem * var(--se-font-scale, 1)) !important;
+    line-height: calc(1rem * var(--se-font-scale, 1)) !important;
+  }
+  html.se-dark .xl\:text-sm {
+    font-size: calc(0.875rem * var(--se-font-scale, 1)) !important;
+    line-height: calc(1.25rem * var(--se-font-scale, 1)) !important;
+  }
+  html.se-dark .xl\:text-base {
+    font-size: calc(1rem * var(--se-font-scale, 1)) !important;
+    line-height: calc(1.5rem * var(--se-font-scale, 1)) !important;
+  }
+  html.se-dark .xl\:text-lg {
+    font-size: calc(1.125rem * var(--se-font-scale, 1)) !important;
+    line-height: calc(1.75rem * var(--se-font-scale, 1)) !important;
+  }
+  html.se-dark .xl\:text-xl {
+    font-size: calc(1.25rem * var(--se-font-scale, 1)) !important;
+    line-height: calc(1.75rem * var(--se-font-scale, 1)) !important;
+  }
+  html.se-dark .xl\:text-2xl {
+    font-size: calc(1.5rem * var(--se-font-scale, 1)) !important;
+    line-height: calc(2rem * var(--se-font-scale, 1)) !important;
+  }
+  html.se-dark .xl\:text-3xl {
+    font-size: calc(1.875rem * var(--se-font-scale, 1)) !important;
+    line-height: calc(2.25rem * var(--se-font-scale, 1)) !important;
+  }
+  html.se-dark .xl\:text-4xl {
+    font-size: calc(2.25rem * var(--se-font-scale, 1)) !important;
+    line-height: calc(2.5rem * var(--se-font-scale, 1)) !important;
+  }
+  html.se-dark .xl\:text-5xl {
+    font-size: calc(3rem * var(--se-font-scale, 1)) !important;
+  }
 }
 
 /* ── shadcn/ui CSS variable tokens ──────────────────────────── */
@@ -697,12 +973,17 @@ html.se-dark [class~="text-[#64739C]"] {
 }
 
 /* Catch other arbitrary light bg hex values (#E__, #F__) — genuinely
-   needs substring matching since the exact hex is unknown ahead of time. */
-html.se-dark [class*="bg-[#E"] {
+   needs substring matching since the exact hex is unknown ahead of time.
+   Substring matching cannot tell a near-white chip (#EFF1F5, #F4F4FE) from
+   a saturated brand colour that merely starts with the same nibble
+   (#E11D48, #F97316), so hero/ad slide artwork — which supplies its own
+   palette and its own foreground colours — is excluded. Everything there
+   is drawn to sit on the slide, not on the page surface. */
+html.se-dark [class*="bg-[#E"]:not([data-slot="carousel-item"] *) {
   background-color: var(--se-bg3) !important;
 }
 
-html.se-dark [class*="bg-[#F"] {
+html.se-dark [class*="bg-[#F"]:not([data-slot="carousel-item"] *) {
   background-color: var(--se-bg2) !important;
 }
 
@@ -832,6 +1113,51 @@ html.se-dark [class*="--agent-dark:"] {
   --agent-dark: var(--se-bg2) !important;
 }
 
+/* ── Home hero carousel (logged-out) ──────────────────────────
+   The two hero slides are self-contained ARTWORK, not site chrome: each
+   ships its own background (a photographic banner behind a black scrim,
+   and a light-cyan `from-[#00CCFE] to-[#A6EDFF]` gradient) plus the text
+   and button colours chosen to sit on it. The global token rules were
+   recolouring the foregrounds while leaving those backgrounds untouched,
+   which is what made the slides unreadable when logged out:
+     • the sponsor slide's `text-black` headline/body went LIGHT on light
+       cyan,
+     • the "Sign Up" button's `bg-white` went dark while its `text-[#3223A0]`
+       stayed dark purple, and
+     • the active carousel dot's `bg-white` went dark against the photo.
+   So restore the site's own values inside a slide. Anchored on shadcn's
+   `data-slot` attributes, which are structural and survive class churn.
+   These rules are two compounds deep, so they outrank the single-compound
+   token rules above regardless of source order. */
+html.se-dark [data-slot="carousel-item"] [class~="text-black"] {
+  color: #000 !important;
+}
+
+html.se-dark [data-slot="carousel-item"] [class~="text-white"] {
+  color: #fff !important;
+}
+
+html.se-dark [data-slot="carousel-item"] [class~="text-slate-200"] {
+  color: #e2e8f0 !important;
+}
+
+html.se-dark [data-slot="carousel-item"] [class~="bg-white"],
+html.se-dark [data-slot="carousel-dots"] [class~="bg-white"] {
+  background-color: #fff !important;
+  box-shadow: none !important;
+}
+
+html.se-dark [data-slot="carousel-item"] [class~="bg-black"] {
+  background-color: #000 !important;
+}
+
+/* A full-brightness photo/cyan slide is the brightest thing on an
+   otherwise dark page. Take the edge off without washing out the
+   artwork or touching its contrast ratios materially. */
+html.se-dark [data-slot="carousel-item"] {
+  filter: brightness(0.9);
+}
+
 /* ════════════════════════════════════════════════════════════════
    IN-PAGE TOOLBAR — quick dark toggle + theme menu.
    Always present (light or dark) so users can switch from the navbar.
@@ -854,6 +1180,31 @@ html.se-dark [class*="--agent-dark:"] {
   z-index: 60;
   vertical-align: middle;
 }
+
+/* Floating fallback — mounted by content.js when Hide nav is on, since the
+   toolbar normally lives inside the navbar that just disappeared. Without
+   it, hiding the nav would strand the user with no way to turn dark mode
+   back off short of opening the popup. */
+.se-toolbar.se-toolbar-floating {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  margin-left: 0;
+  padding: 4px;
+  border-radius: 10px;
+  background: rgba(22, 27, 34, 0.86);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(8px);
+  color: #e6edf3;
+  z-index: 2147483000;
+}
+
+/* The theme button's gradient bars are painted from the live palette
+   variables, which only exist on html.se-dark. In light mode the SVG's
+   own stop fallbacks take over, so no extra rule is needed here — but the
+   button still needs a visible resting opacity next to Earn's own icons. */
+.se-toolbar .se-tb-menu-btn { opacity: 1; }
 
 .se-tb-btn {
   display: inline-flex;
