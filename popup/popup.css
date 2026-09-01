@@ -525,3 +525,108 @@ input[type="color"] {
   gap: 3px;
   padding-bottom: 4px;
 }
+
+/* ── In-popup dialog ───────────────────────────────────────────
+   Stands in for window.prompt/confirm, which Chrome suppresses inside
+   an extension action popup. Fixed to the popup viewport so it covers
+   whichever tab panel is scrolled into view. */
+.dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.dialog-backdrop[hidden] { display: none; }
+
+.dialog {
+  width: 100%;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg2);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+}
+
+.dialog-message {
+  margin-bottom: 12px;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--text);
+  white-space: pre-line;
+}
+
+.dialog-input {
+  width: 100%;
+  margin-bottom: 12px;
+  padding: 7px 9px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg3);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 13px;
+}
+
+.dialog-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.dialog-input[hidden] { display: none; }
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.dialog-btn {
+  padding: 6px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg3);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.dialog-btn:hover { background: var(--border); }
+
+.dialog-btn-primary {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #fff;
+}
+
+.dialog-btn-primary:hover { filter: brightness(1.1); }
+
+/* Shown when a pasted wallpaper URL is refused by the site's img-src
+   policy — without it the wallpaper just silently never appears. */
+.wallpaper-warning {
+  margin: 2px 0 6px;
+  padding: 7px 9px;
+  border: 1px solid #7a4a1a;
+  border-radius: var(--radius-sm);
+  background: rgba(217, 138, 0, 0.12);
+  color: #e0b070;
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.wallpaper-warning[hidden] { display: none; }
+
+/* The slider end-markers and the live value all used --muted, so on the
+   wallpaper row the "60%" maximum read as a second value sitting next to
+   "15%", the actual one. Give the live value the foreground colour so
+   it's unmistakably the reading rather than another tick label. */
+#font-size-label,
+#wallpaper-opacity-label {
+  color: var(--text);
+  font-weight: 600;
+}

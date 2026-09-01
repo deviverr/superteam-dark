@@ -62,7 +62,7 @@ const PRESETS = {
   },
   amoled: {
     bg: '#000000', bg2: '#0a0a0a', bg3: '#111111',
-    border: '#1c1c1c', text: '#f0f0f0', muted: '#777777', accent: '#5522e0',
+    border: '#1c1c1c', text: '#f0f0f0', muted: '#9a9a9a', accent: '#5522e0',
   },
   nord: {
     bg: '#2e3440', bg2: '#3b4252', bg3: '#434c5e',
@@ -70,23 +70,23 @@ const PRESETS = {
   },
   dracula: {
     bg: '#282a36', bg2: '#1e1f29', bg3: '#44475a',
-    border: '#6272a4', text: '#f8f8f2', muted: '#6272a4', accent: '#bd93f9',
+    border: '#6272a4', text: '#f8f8f2', muted: '#b2bade', accent: '#bd93f9',
   },
   catppuccin: {
     bg: '#1e1e2e', bg2: '#181825', bg3: '#313244',
-    border: '#45475a', text: '#cdd6f4', muted: '#7f849c', accent: '#cba6f7',
+    border: '#45475a', text: '#cdd6f4', muted: '#a6adc8', accent: '#cba6f7',
   },
   tokyonight: {
     bg: '#1a1b26', bg2: '#16161e', bg3: '#24283b',
-    border: '#292e42', text: '#c0caf5', muted: '#565f89', accent: '#7aa2f7',
+    border: '#292e42', text: '#c0caf5', muted: '#9aa5ce', accent: '#7aa2f7',
   },
   gruvbox: {
     bg: '#282828', bg2: '#1d2021', bg3: '#3c3836',
-    border: '#504945', text: '#ebdbb2', muted: '#a89984', accent: '#d3869b',
+    border: '#504945', text: '#ebdbb2', muted: '#b5a68f', accent: '#d3869b',
   },
   onedark: {
     bg: '#282c34', bg2: '#21252b', bg3: '#2c313c',
-    border: '#3e4451', text: '#abb2bf', muted: '#5c6370', accent: '#61afef',
+    border: '#3e4451', text: '#abb2bf', muted: '#a0a8b5', accent: '#61afef',
   },
 };
 
@@ -95,6 +95,54 @@ const PRESETS = {
 // whichever preset/theme was last applied). Used so "Save Current as Theme"
 // can snapshot the full palette, not just the 3 visible pickers.
 let currentPalette = {};
+
+/* ── In-popup dialogs ──────────────────────────────────────────
+   Chrome suppresses window.prompt/confirm/alert in an extension action
+   popup (the popup's host returns true from ShouldSuppressDialogs), so
+   prompt() resolved to null and confirm() to false without ever showing
+   anything — naming/renaming/deleting a theme and the factory reset were
+   all dead buttons. These promise-based equivalents drive the markup in
+   popup.html instead. Both resolve to null / false on cancel, matching
+   the shape of the calls they replace. */
+function openDialog({ message, withInput, defaultValue = '', okLabel = 'OK' }) {
+  const backdrop = $('dialog');
+  const input    = $('dialog-input');
+  const ok       = $('dialog-ok');
+  const cancel   = $('dialog-cancel');
+
+  $('dialog-message').textContent = message;
+  input.hidden = !withInput;
+  input.value  = withInput ? defaultValue : '';
+  ok.textContent = okLabel;
+  backdrop.hidden = false;
+  (withInput ? input : ok).focus();
+  if (withInput) input.select();
+
+  return new Promise(resolve => {
+    const done = result => {
+      backdrop.hidden = true;
+      ok.removeEventListener('click', onOk);
+      cancel.removeEventListener('click', onCancel);
+      backdrop.removeEventListener('click', onBackdrop);
+      document.removeEventListener('keydown', onKey);
+      resolve(result);
+    };
+    const onOk      = () => done(withInput ? input.value : true);
+    const onCancel  = () => done(withInput ? null : false);
+    const onBackdrop = e => { if (e.target === backdrop) onCancel(); };
+    const onKey = e => {
+      if (e.key === 'Escape') onCancel();
+      if (e.key === 'Enter' && withInput) onOk();
+    };
+    ok.addEventListener('click', onOk);
+    cancel.addEventListener('click', onCancel);
+    backdrop.addEventListener('click', onBackdrop);
+    document.addEventListener('keydown', onKey);
+  });
+}
+
+const askText    = (message, defaultValue) => openDialog({ message, withInput: true, defaultValue, okLabel: 'Save' });
+const askConfirm = (message, okLabel = 'OK') => openDialog({ message, withInput: false, okLabel });
 
 const debounceTimers = {};
 function debouncedSave(key, value, delay = 150) {
@@ -152,8 +200,10 @@ function previewFullPreset(p) {
   previewColor('--se-border',      p.border);
   previewColor('--se-text',        p.text);
   previewColor('--se-text-muted',  p.muted);
+  // --se-link is derived from the accent by the content script (it lifts
+  // it for contrast against --se-bg), so pushing the raw accent here
+  // would land last and clobber that correction.
   previewColor('--se-accent',      p.accent);
-  previewColor('--se-link',        p.accent);
 }
 
 /* ── Tabs ──────────────────────────────────────────────────── */
@@ -299,6 +349,30 @@ wireHide('hide-banner',  KEYS.hideBanner);
 wireHide('hide-footer',  KEYS.hideFooter);
 
 /* ── Wallpaper URL -- live save + preview ──────────────────── */
+// Earn serves `img-src 'self' blob: data: <a few CDNs>`, and content-script
+// CSS obeys the page's CSP, so most pasted URLs are refused by the browser
+// and the wallpaper silently never appears. Ask the content script to load
+// the URL in the page — the only context where that policy applies — and
+// surface the result instead of leaving the user guessing. Uploads take the
+// data: path, which the policy always allows.
+function probeWallpaper(url) {
+  if (/^(data|blob):/i.test(url)) { $('wallpaper-warning').hidden = true; return; }
+  chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
+    const tab = tabs[0];
+    if (!tab || !tab.url || !tab.url.includes('superteam.fun')) return;
+    chrome.tabs.sendMessage(tab.id, { type: 'SE_PROBE_WALLPAPER', url })
+      .then(res => {
+        const el = $('wallpaper-warning');
+        if (!res || res.ok !== false) { el.hidden = true; return; }
+        el.textContent = res.reason === 'load'
+          ? 'That image URL could not be loaded. Check the link, or use File below to upload the image instead.'
+          : 'Earn blocked that image URL. Its security policy only allows images it hosts itself — use File below to upload instead.';
+        el.hidden = false;
+      })
+      .catch(() => {});
+  });
+}
+
 $('wallpaper-url-set').addEventListener('click', () => {
   const url = $('wallpaper-url').value.trim();
   if (!url) return;
@@ -306,6 +380,7 @@ $('wallpaper-url-set').addEventListener('click', () => {
   const currentOp = Number($('wallpaper-opacity').value) / 100;
   previewColor('--se-wallpaper-opacity', String(currentOp));
   saveAndNotify({ [KEYS.wallpaperUrl]: url });
+  probeWallpaper(url);
 });
 
 /* ── Wallpaper file -- live save, compressed ───────────────── */
@@ -318,6 +393,7 @@ $('wallpaper-upload').addEventListener('change', e => {
     previewColor('--se-wallpaper-url', `url("${compressed}")`);
     const currentOp = Number($('wallpaper-opacity').value) / 100;
     previewColor('--se-wallpaper-opacity', String(currentOp));
+    $('wallpaper-warning').hidden = true;
     saveAndNotify({ [KEYS.wallpaperUrl]: compressed });
   };
   reader.readAsDataURL(file);
@@ -335,6 +411,7 @@ $('wallpaper-opacity').addEventListener('input', e => {
 /* ── Wallpaper clear -- immediate ───────────────────────────── */
 $('wallpaper-clear').addEventListener('click', () => {
   $('wallpaper-url').value = '';
+  $('wallpaper-warning').hidden = true;
   saveAndNotify({ [KEYS.wallpaperUrl]: null });
 });
 
@@ -401,9 +478,9 @@ function renderCustomThemes(themes) {
     rename.className = 'custom-theme-rename';
     rename.textContent = '✎';
     rename.title = 'Rename theme';
-    rename.addEventListener('click', e => {
+    rename.addEventListener('click', async e => {
       e.stopPropagation();
-      const name = prompt('Rename theme:', t.name);
+      const name = await askText('Rename theme', t.name);
       if (!name || !name.trim() || name.trim() === t.name) return;
       chrome.storage.local.get([KEYS.savedThemes], stored => {
         const all = (stored[KEYS.savedThemes] || []).map(x => x.id === t.id ? { ...x, name: name.trim() } : x);
@@ -417,9 +494,9 @@ function renderCustomThemes(themes) {
     del.className = 'custom-theme-delete';
     del.textContent = '×';
     del.title = 'Delete theme';
-    del.addEventListener('click', e => {
+    del.addEventListener('click', async e => {
       e.stopPropagation();
-      if (!confirm(`Delete theme "${t.name}"?`)) return;
+      if (!await askConfirm(`Delete theme "${t.name}"?`, 'Delete')) return;
       chrome.storage.local.get([KEYS.savedThemes], stored => {
         const remaining = (stored[KEYS.savedThemes] || []).filter(x => x.id !== t.id);
         chrome.storage.local.set({ [KEYS.savedThemes]: remaining });
@@ -434,8 +511,8 @@ function renderCustomThemes(themes) {
   row.style.display = themes.length ? 'flex' : 'none';
 }
 
-$('save-custom-theme').addEventListener('click', () => {
-  const name = prompt('Name this theme:', 'My Theme');
+$('save-custom-theme').addEventListener('click', async () => {
+  const name = await askText('Name this theme', 'My Theme');
   if (!name || !name.trim()) return;
   const theme = { id: 'ct-' + Date.now().toString(36), name: name.trim(), ...currentPalette };
   chrome.storage.local.get([KEYS.savedThemes], stored => {
@@ -476,8 +553,11 @@ $('reset-colors').addEventListener('click', () => {
 });
 
 /* ── Factory reset ──────────────────────────────────────────── */
-$('factory-reset').addEventListener('click', () => {
-  if (!confirm('Factory reset Superteam Earn Dark?\nThis erases all settings, custom themes, and the wallpaper.')) return;
+$('factory-reset').addEventListener('click', async () => {
+  const ok = await askConfirm(
+    'Factory reset Superteam Earn Dark?\nThis erases all settings, custom themes, and the wallpaper.',
+    'Reset');
+  if (!ok) return;
   chrome.storage.local.clear(() => {
     chrome.storage.local.set(DEFAULTS, () => {
       populateUI(DEFAULTS);

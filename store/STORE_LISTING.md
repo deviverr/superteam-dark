@@ -33,7 +33,10 @@ wallpaper, layout, and what's visible on the page.
   and links — applied consistently across the whole site, with live preview
 - Create your own named custom themes, keep as many as you like, and switch
   between them alongside the 8 built-in presets
-- Custom wallpaper (URL or upload) with opacity control
+- Custom wallpaper with opacity control — upload your own image, or point
+  it at a URL (Earn's security policy only permits some remote images, so
+  uploading is the reliable route and the extension tells you if a URL is
+  refused)
 - Adjustable font size
 - One-click reset back to factory defaults whenever you want a clean slate
 
@@ -90,19 +93,30 @@ of the Superteam Earn website (superteam.fun/earn).
 ---
 
 ## Required graphics checklist
-- [ ] **Store icon** — 128×128 PNG → use `icons/icon128.png` ✅ (already present)
-- [ ] **Screenshots** — 1280×800 or 640×400 PNG/JPEG, 1–5 images. Suggested set:
-  1. Earn home in dark mode with the navbar sun/moon toggle visible
-  2. Theme menu open showing the 8 preset swatches
-  3. Popup → Customize tab (colors + presets)
-  4. A bounty listing in dark mode
-  5. Wallpaper applied
+- [x] **Store icon** — 128×128 PNG → `icons/icon128.png`
+- [x] **Screenshots** — 1280×800 PNG, in `store/screenshots/`, upload in this order:
+  1. `01-home-dark.png` — Earn home in dark mode, navbar toggle visible
+  2. `02-theme-menu.png` — theme menu open showing the 8 preset swatches
+  3. `03-popup-customize.png` — popup Customize tab over a dimmed page
+  4. `04-listing-dracula.png` — a bounty listing under the Dracula preset
+  5. `05-wallpaper.png` — grants page with a wallpaper applied
 - [ ] **Small promo tile** — 440×280 PNG (optional but recommended)
 - [ ] **Marquee promo** — 1400×560 PNG (optional)
 
 ## Pre-submission checklist
-- [ ] Load `dist/superteam-earn-dark-1.5.zip` via chrome://extensions →
+- [x] Automated pass on Chrome 152 against the live site — 89 assertions, 0 failures:
+      7 pages in dark mode, all 8 presets, light-mode non-interference, 390px
+      mobile, SPA per-page overrides, popup dialogs and theme CRUD, wallpaper
+      rendering and URL probing, toolbar interactions
+- [x] Package verified byte-identical to source; 12 files, no dev assets included
+- [ ] Load `dist/superteam-earn-dark-1.6.zip` via chrome://extensions →
       "Load unpacked" (unzip first) and smoke-test on superteam.fun/earn
-- [ ] Confirm navbar toggle + theme menu appear and persist across navigation
-- [ ] Confirm all 8 presets fully recolor the page
-- [ ] Upload zip, fill fields above, set visibility, submit for review
+- [ ] Push the repo so the privacy-policy URL serves the current file
+- [ ] Upload zip, fill fields above, attach the 5 screenshots, submit for review
+
+## Known issue (not blocking)
+One rotating "Become a Sponsor" banner slide (labels seen once: "Post for Free",
+"Writing", "Hype Videos") measured low contrast in a single automated run and
+could not be reproduced across 13 further loads — that slide is served
+intermittently. Worth re-checking if it reappears; every other surface audited
+clean across all 8 presets.

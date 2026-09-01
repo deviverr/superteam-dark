@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Superteam Earn Dark",
-  "version": "1.5",
+  "version": "1.6",
   "description": "Full customization for Superteam Earn — dark mode, 8 presets, named custom themes, per-element colors, wallpaper, and more.",
   "icons": {
     "16": "icons/icon16.png",

@@ -9,7 +9,15 @@ html.se-dark {
   --se-text-muted:   #a0aab4;
   --se-accent:       #5522e0;
   --se-accent2:      #7c3aed;
-  --se-link:         #8b5cf6;
+  /* Derived companions to --se-accent. content.js recomputes both from
+     the live accent + background whenever the palette changes; these
+     defaults cover the built-in palette above.
+       --se-accent-fg   text drawn ON an accent-filled surface
+       --se-accent-text accent used AS text, lifted to stay legible on
+                        --se-bg (the raw accent is ~1.4:1 there) */
+  --se-accent-fg:    #ffffff;
+  --se-accent-text:  #a78bfa;
+  --se-link:         #a78bfa;
   --se-danger:       #f85149;
   --se-success:      #3fb950;
   color-scheme: dark;
@@ -52,8 +60,22 @@ html.se-dark main {
   color: var(--se-text) !important;
 }
 
-/* ── Wallpaper ─────────────────────────────────────────────── */
-html.se-dark body::before {
+/* ── Wallpaper ─────────────────────────────────────────────────
+   Hung off the ROOT element, not <body>. A fixed body::before at
+   z-index:-1 still paints below the backgrounds of body's in-flow
+   block descendants — and #__next/main are given an opaque --se-bg
+   fill by the Base rule above, so the wallpaper was covered by the
+   page's own background and never visible at any opacity.
+   On html the pseudo-element sits directly above the canvas fill and
+   below every descendant, so switching those three surfaces to
+   transparent (only while .se-wallpaper is on, so the no-wallpaper
+   case is untouched) lets it show through the page gutters while
+   cards/nav keep their panel colours. */
+html.se-dark.se-wallpaper {
+  background-color: var(--se-bg) !important;
+}
+
+html.se-dark.se-wallpaper::before {
   content: '';
   position: fixed;
   inset: 0;
@@ -64,6 +86,17 @@ html.se-dark body::before {
   opacity: var(--se-wallpaper-opacity, 0.15);
   z-index: -1;
   pointer-events: none;
+}
+
+html.se-dark.se-wallpaper body,
+html.se-dark.se-wallpaper #__next,
+html.se-dark.se-wallpaper main,
+/* The app shell inside #__next is a full-height bg-neutral-100 div, so
+   the rules above alone still left an opaque sheet over the wallpaper.
+   min-h-screen is the reliable marker for a page-height shell — cards
+   and panels never carry it, so their fills are preserved. */
+html.se-dark.se-wallpaper [class*="min-h-screen"] {
+  background-color: transparent !important;
 }
 
 /* ── Nav / Header ──────────────────────────────────────────── */
@@ -88,9 +121,15 @@ html.se-dark .sticky {
    *= selector force-fills it permanently, which is exactly why nav
    icon buttons, sidebar rows, dropdown items etc. showed a background
    in dark mode that light mode never shows at rest. ~= only matches
-   when the token is its own whole class, so hover:/focus:/active:/
-   sm:/md:/lg: prefixed variants are correctly left alone (they still
-   work via the real :hover/:focus rules further below). */
+   when the token is its own whole class, so hover:/focus:/active:
+   variants are correctly left alone (they still work via the real
+   :hover/:focus rules further below).
+   Breakpoint variants (sm:/md:/lg:) are a different case — they are
+   unconditionally on above their width, so they DO want recolouring —
+   but they need naming one by one rather than a blanket *=, which would
+   drag the state variants back in. Earn currently ships none for
+   backgrounds; add explicit selectors here if that changes. The border
+   rules further down can and do use *=, for the reason given there. */
 html.se-dark [class~="bg-white"] {
   background-color: var(--se-bg2) !important;
 }
@@ -192,15 +231,25 @@ html.se-dark [class~="text-zinc-300"] {
   color: var(--se-text-muted) !important;
 }
 
-/* ── Borders — specific classes, not the nuclear [class*="border"] ── */
-html.se-dark [class~="border-slate-100"],
-html.se-dark [class~="border-slate-200"],
-html.se-dark [class~="border-slate-300"] {
+/* ── Borders — specific colour tokens, not the nuclear [class*="border"] ──
+   These use substring matching where the background rules above
+   deliberately use exact-token matching, and that difference is on
+   purpose. A border-COLOUR utility is inert unless some other class sets
+   a border-width, so matching a prefixed variant can never draw a border
+   that light mode doesn't draw — the risk that makes *= wrong for bg-*
+   simply doesn't exist here. Exact matching, meanwhile, missed the
+   responsive variants: the main content column is
+   `lg:border-r lg:border-slate-100`, and since lg: is a breakpoint (not a
+   state) that border is permanently on at desktop widths — it rendered as
+   a near-white rule down the middle of the page. */
+html.se-dark [class*="border-slate-100"],
+html.se-dark [class*="border-slate-200"],
+html.se-dark [class*="border-slate-300"] {
   border-color: var(--se-border) !important;
 }
 
-html.se-dark [class~="border-gray-200"],
-html.se-dark [class~="border-gray-300"] {
+html.se-dark [class*="border-gray-200"],
+html.se-dark [class*="border-gray-300"] {
   border-color: var(--se-border) !important;
 }
 
@@ -239,23 +288,31 @@ html.se-dark .bg-gray-50 {
 }
 
 /* ── Buttons ────────────────────────────────────────────────── */
-/* Keep brand-purple CTAs — don't invert */
+/* Keep brand-purple CTAs — don't invert. The foreground is --se-accent-fg,
+   not a hardcoded #fff: several presets ship a light accent (Dracula
+   #bd93f9, Nord #88c0d0, One Dark #61afef) where white-on-accent leaves
+   the site's primary "Sign Up"/"Submit" buttons barely readable. */
 html.se-dark .bg-brand-purple {
   background-color: var(--se-accent) !important;
-  color: #fff !important;
+  color: var(--se-accent-fg, #fff) !important;
 }
 
+/* Accent as TEXT sits on --se-bg, so it uses the lifted --se-accent-text
+   (the raw accent measures ~1.4:1 against the default background). */
 html.se-dark .text-brand-purple {
-  color: var(--se-accent) !important;
+  color: var(--se-accent-text, var(--se-accent)) !important;
 }
 
 html.se-dark .hover\:text-brand-purple:hover {
-  color: var(--se-accent) !important;
+  color: var(--se-accent-text, var(--se-accent)) !important;
 }
 
-/* Generic buttons that aren't branded */
-html.se-dark button:not([class*="bg-brand"]):not([class*="bg-indigo"]):not([class*="bg-red"]),
-html.se-dark [role="button"] {
+/* Generic buttons that aren't branded.
+   :not([class*="se-tb"]) excludes our own toolbar buttons — this rule is
+   !important and would otherwise flatten the sun/moon toggle's amber and
+   violet state colours to plain --se-text. */
+html.se-dark button:not([class*="bg-brand"]):not([class*="bg-indigo"]):not([class*="bg-red"]):not([class*="se-tb"]),
+html.se-dark [role="button"]:not([class*="se-tb"]) {
   color: var(--se-text) !important;
 }
 
@@ -271,13 +328,19 @@ html.se-dark .hover\:bg-accent:hover {
   background-color: var(--se-bg3) !important;
 }
 
-/* ── Links ──────────────────────────────────────────────────── */
-html.se-dark a:not([class*="bg-brand"]):not([class*="text-brand"]):not([class*="text-white"]) {
+/* ── Links ────────────────────────────────────────────────────
+   :not([class*="bg-"]) skips anchors styled as buttons. Tailwind only
+   puts a bg-* utility on an anchor when it is meant to read as a filled
+   control, and those carry their own foreground colour chosen against
+   that fill — repainting them link-violet produced e.g. violet-on-mint
+   at 1.5:1 on the /earn/agents CTA. Plain text links have no bg-* token
+   and are unaffected. */
+html.se-dark a:not([class*="bg-"]):not([class*="text-brand"]):not([class*="text-white"]) {
   color: var(--se-link) !important;
 }
 
-html.se-dark a:hover:not([class*="bg-brand"]):not([class*="text-brand"]) {
-  color: var(--se-accent) !important;
+html.se-dark a:hover:not([class*="bg-"]):not([class*="text-brand"]) {
+  color: var(--se-accent-text, var(--se-accent)) !important;
 }
 
 /* Nav links — keep them muted, not link-blue */
@@ -330,9 +393,18 @@ html.se-dark .hover\:text-slate-700:hover {
   color: var(--se-text) !important;
 }
 
-/* Generic white-border safety net */
+/* White borders: make them disappear, don't recolour them.
+   Earn uses `border border-white` on the profile dropdown trigger and
+   `border-2 border-white` on the avatar inside it — white on a white
+   navbar, i.e. deliberately invisible. Mapping those to --se-border drew
+   a grey box around the profile button that light mode never shows.
+   `transparent` reproduces the light-mode result on any surface, because
+   the element's own background paints under its border box.
+   Exact-token matching here on purpose: border-white/40 and
+   border-white/50 are translucent outlines over hero imagery, where the
+   white IS meant to be seen, so they must not be caught. */
 html.se-dark [class~="border-white"] {
-  border-color: var(--se-border) !important;
+  border-color: transparent !important;
 }
 
 /* shadcn/ui dropdown triggers (profile menu, and any future ones — this
@@ -385,18 +457,31 @@ html.se-dark [class*="Chip"] {
   border-color: var(--se-border) !important;
 }
 
-/* ── White gradient overlays (fade-out effects) ─────────────── */
-/* Site uses bg-gradient-to-t from-white to fade content edges */
-html.se-dark [class~="from-white"] {
-  --tw-gradient-from: var(--se-bg) !important;
+/* ── White gradient overlays (fade-out effects) ───────────────
+   The site fades scroll edges with `from-white`/`via-white` overlays.
+   Two fixes over the previous version:
+     • substring, not exact-token, matching. Tailwind v4 writes opacity
+       modifiers into the token itself (`from-white/80 via-white/30`),
+       which a [class~=] selector never matches — those overlays kept
+       their literal white and showed as pale smudges at both ends of
+       the category-filter row.
+     • --se-bg2, not --se-bg. Every one of these overlays sits on a
+       panel, so fading toward the page background made them *darker*
+       than their surface: the "Recent Earners" fade rendered as a solid
+       dark band across the first row instead of a fade.
+   This is one of the few places substring matching is correct: a
+   hover:from-white variant should be recoloured too, since it also
+   only ever paints white. */
+html.se-dark [class*="from-white"] {
+  --tw-gradient-from: var(--se-bg2) !important;
 }
 
-html.se-dark [class~="to-white"] {
-  --tw-gradient-to: var(--se-bg) !important;
+html.se-dark [class*="to-white"] {
+  --tw-gradient-to: var(--se-bg2) !important;
 }
 
-html.se-dark [class~="via-white"] {
-  --tw-gradient-via: var(--se-bg) !important;
+html.se-dark [class*="via-white"] {
+  --tw-gradient-via: var(--se-bg2) !important;
 }
 
 /* ── Skeleton loaders ───────────────────────────────────────── */
@@ -491,7 +576,7 @@ html.se-dark {
   --border:               var(--se-border);
   --input:                var(--se-bg3);
   --primary:              var(--se-accent);
-  --primary-foreground:   #fff;
+  --primary-foreground:   var(--se-accent-fg, #fff);
   --secondary:            var(--se-bg2);
   --secondary-foreground: var(--se-text-muted);
   --accent:               var(--se-bg3);
@@ -513,7 +598,7 @@ html.se-dark .bg-destructive      { background-color: var(--se-danger) !importan
 html.se-dark .text-foreground         { color: var(--se-text) !important; }
 html.se-dark .text-card-foreground    { color: var(--se-text) !important; }
 html.se-dark .text-popover-foreground { color: var(--se-text) !important; }
-html.se-dark .text-primary-foreground { color: #fff !important; }
+html.se-dark .text-primary-foreground { color: var(--se-accent-fg, #fff) !important; }
 html.se-dark .text-secondary-foreground { color: var(--se-text-muted) !important; }
 html.se-dark .text-muted-foreground  { color: var(--se-text-muted) !important; }
 html.se-dark .text-accent-foreground { color: var(--se-text) !important; }
@@ -574,9 +659,9 @@ html.se-dark .hover\:bg-zinc-200:hover {
 }
 
 /* Zinc borders */
-html.se-dark [class~="border-zinc-100"],
-html.se-dark [class~="border-zinc-200"],
-html.se-dark [class~="border-zinc-300"] {
+html.se-dark [class*="border-zinc-100"],
+html.se-dark [class*="border-zinc-200"],
+html.se-dark [class*="border-zinc-300"] {
   border-color: var(--se-border) !important;
 }
 
@@ -639,9 +724,17 @@ html.se-dark img[alt="Superteam Earn"] {
    instance of the same asset, and matching by src too means a stray
    alt-text change on any one page doesn't silently break the swap and
    leave the light logo showing). */
+/* The URL comes from a variable content.js fills with
+   chrome.runtime.getURL(), NOT a relative path. Chrome resolves relative
+   URLs in an injected content-script stylesheet against the PAGE, not the
+   stylesheet — so "../assets/solana-dark-logo.svg" silently became
+   https://superteam.fun/assets/solana-dark-logo.svg, a 404, and the light
+   badge stayed. If the variable is ever missing the declaration is
+   invalid and the original image simply renders, which is the safe
+   fallback. */
 html.se-dark img[alt="Powered by Solana"],
 html.se-dark img[src*="solana-powered"] {
-  content: url("../assets/solana-dark-logo.svg");
+  content: var(--se-solana-logo);
 }
 
 /* ── Violet / FEATURED badge ────────────────────────────────── */
@@ -744,6 +837,14 @@ html.se-dark [class*="--agent-dark:"] {
    Always present (light or dark) so users can switch from the navbar.
    Self-contained styling: does NOT depend on html.se-dark.
    ════════════════════════════════════════════════════════════════ */
+/* Wrapper content.js slips around the mobile navbar's trailing button so
+   the toolbar can sit beside it without becoming a third child of the
+   site's justify-between row (which would re-centre that button). */
+.se-tb-slot {
+  display: inline-flex;
+  align-items: center;
+}
+
 .se-toolbar {
   display: inline-flex;
   align-items: center;
@@ -784,9 +885,13 @@ html.se-dark [class*="--agent-dark:"] {
   display: block;
 }
 
-/* Sun glows amber when dark is OFF; moon is calm when ON */
-.se-toolbar:not(.se-on) .se-tb-toggle { color: #d98a00; opacity: 0.9; }
-.se-toolbar.se-on .se-tb-toggle       { color: #a78bfa; opacity: 0.95; }
+/* Both toggle states inherit the navbar's own icon colour (via
+   currentColor on .se-tb-btn) rather than carrying their own amber/violet
+   accents, so the cluster reads as part of Earn's navbar instead of
+   something bolted on. The sun/moon shape already communicates the state;
+   colouring it as well made the toolbar the loudest thing in the bar. */
+.se-toolbar .se-tb-toggle { opacity: 0.9; }
+.se-toolbar:hover .se-tb-toggle { opacity: 1; }
 
 /* ── Theme menu dropdown ─────────────────────────────────────── */
 .se-tb-menu {
