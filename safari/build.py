@@ -50,7 +50,7 @@ DEVELOPMENT_TEAM = "VSUKBA84LT"
 # comes from the manifest, but Apple additionally requires the build number to
 # be unique within a marketing version — re-uploading 1.7 after a rejection
 # means raising this, not the manifest.
-BUILD_NUMBER = "5"
+BUILD_NUMBER = "6"
 
 # App Store category. Required for macOS submissions; App Store Connect
 # rejects the upload outright when it is missing.

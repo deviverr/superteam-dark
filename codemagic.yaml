@@ -1,0 +1,69 @@
+# Codemagic runs on released macOS images, which is the entire reason this file
+# exists. Archives produced on the developer Mac record
+# BuildMachineOSBuild 26A5388g (macOS 27.0 beta) and App Store Connect rejects
+# them with ITMS-90111, "Unsupported SDK or Xcode version", even though the
+# Xcode and SDK versions themselves are the current released ones. The host OS
+# is the part Apple objects to.
+#
+# Both archives are built without code signing, so this workflow needs no
+# certificates and no App Store Connect key — nothing secret lives here. The
+# xcarchives are published as artifacts, then exported, signed and uploaded
+# from the developer Mac by safari/upload-ci-archives.sh. Signing happens after
+# compilation, so it never touches the toolchain or build-machine metadata that
+# App Review inspects.
+#
+# Keep BUILD_NUMBER in step with safari/build.py, which is what stamps the
+# number into the checked-in Xcode project.
+workflows:
+  safari-archives:
+    name: Safari unsigned archives (iOS + macOS)
+    instance_type: mac_mini_m2
+    max_build_duration: 60
+    environment:
+      xcode: 26.6
+      vars:
+        BUILD_NUMBER: 6
+        PROJECT: "safari/xcode/Superteam Earn Dark/Superteam Earn Dark.xcodeproj"
+    scripts:
+      - name: Report the toolchain these archives will record
+        script: |
+          sw_vers
+          xcodebuild -version
+      - name: Archive iOS without signing
+        script: |
+          xcodebuild archive \
+            -project "$PROJECT" \
+            -scheme 'Superteam Earn Dark (iOS)' \
+            -configuration Release \
+            -destination 'generic/platform=iOS' \
+            -archivePath "$CM_BUILD_DIR/EarnDark-iOS.xcarchive" \
+            CURRENT_PROJECT_VERSION="$BUILD_NUMBER" \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY=""
+      - name: Archive macOS without signing
+        script: |
+          xcodebuild archive \
+            -project "$PROJECT" \
+            -scheme 'Superteam Earn Dark (macOS)' \
+            -configuration Release \
+            -destination 'generic/platform=macOS' \
+            -archivePath "$CM_BUILD_DIR/EarnDark-macOS.xcarchive" \
+            CURRENT_PROJECT_VERSION="$BUILD_NUMBER" \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY=""
+      - name: Show the metadata App Review inspects
+        script: |
+          for plist in \
+            "$CM_BUILD_DIR/EarnDark-iOS.xcarchive/Products/Applications/Superteam Earn Dark.app/Info.plist" \
+            "$CM_BUILD_DIR/EarnDark-macOS.xcarchive/Products/Applications/Superteam Earn Dark.app/Contents/Info.plist"; do
+            echo "== $plist"
+            for key in CFBundleShortVersionString CFBundleVersion DTXcode DTXcodeBuild DTSDKName BuildMachineOSBuild; do
+              printf '%s = ' "$key"
+              /usr/libexec/PlistBuddy -c "Print :$key" "$plist"
+            done
+          done
+      - name: Pack the archives for download
+        script: |
+          cd "$CM_BUILD_DIR"
+          zip -qry EarnDark-archives.zip EarnDark-iOS.xcarchive EarnDark-macOS.xcarchive
+    artifacts:
+      - EarnDark-archives.zip
+      - /tmp/xcodebuild_logs/*.log

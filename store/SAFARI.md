@@ -239,6 +239,47 @@ The keychain also holds development identities and a *Developer ID
 Application* certificate; the latter signs notarized direct distribution and is
 **not** used for the App Store.
 
+### The build host must run a released macOS, not a beta
+
+This is the one that cost the most time. This Mac runs macOS 27.0 beta
+(`26A5388g`), and every archive built here records that in
+`BuildMachineOSBuild`. App Store Connect invalidates such builds:
+
+```
+ITMS-90111: Unsupported SDK or Xcode version - App submissions must use the
+latest Xcode and SDK Release Candidates (RC).
+```
+
+The message is misleading. Xcode 26.6 and the iOS 26 SDK *are* the current
+released versions, and they satisfy Apple's published requirement (Xcode 26+,
+iOS 26 SDK, in force since 28 April 2026). There is no newer non-beta Xcode to
+move to — Xcode 27 is still in beta. What Apple objects to is the beta host OS,
+which it reports under a message about the SDK.
+
+Builds 3 and 5 were both lost to this, and the earlier theory that the reviewer
+instructions caused the first rejection was wrong: build 3 carried the same
+beta-host metadata and never reached a human.
+
+The fix is to compile somewhere with a released macOS and sign afterwards.
+Signing does not touch `DTXcode`, `DTSDKName` or `BuildMachineOSBuild`, so an
+unsigned archive from CI plus a local export is a genuine build, not a
+workaround:
+
+```sh
+# after downloading and unpacking the CI artifact
+safari/upload-ci-archives.sh ~/Downloads/earndark-archives
+```
+
+`.github/workflows/safari-archive.yml` (GitHub `macos-26` runner) and
+`codemagic.yaml` (Codemagic `mac_mini_m2`) both produce those unsigned
+archives; either one is enough. `safari/upload-ci-archives.sh` refuses to
+export an archive whose `BuildMachineOSBuild` looks like a beta seed, so this
+cannot silently recur.
+
+Keep `BUILD_NUMBER` in `safari/build.py` in step with the `BUILD_NUMBER` in
+whichever CI file you use — the script stamps the checked-in project, and CI
+passes it again as `CURRENT_PROJECT_VERSION`.
+
 ### Build with release Xcode, not the beta
 
 `xcode-select -p` on this machine points at `/Applications/Xcode-beta.app`.
