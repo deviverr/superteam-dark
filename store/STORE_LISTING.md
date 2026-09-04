@@ -109,8 +109,8 @@ of the Superteam Earn website (superteam.fun/earn).
       mobile, SPA per-page overrides, popup dialogs and theme CRUD, wallpaper
       rendering and URL probing, toolbar interactions
 - [x] Package verified byte-identical to source; 12 files, no dev assets included
-- [ ] Load `dist/superteam-earn-dark-1.7.zip` via chrome://extensions →
-      "Load unpacked" (unzip first) and smoke-test on superteam.fun/earn
+- [ ] Load `dist/chrome/unpacked/` via chrome://extensions → "Load unpacked"
+      and smoke-test on superteam.fun/earn
 - [ ] Push the repo so the privacy-policy URL serves the current file
 - [ ] Upload zip, fill fields above, attach the 5 screenshots, submit for review
 

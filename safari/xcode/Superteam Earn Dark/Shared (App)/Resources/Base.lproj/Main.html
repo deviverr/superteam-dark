@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    <link rel="stylesheet" href="../Style.css">
+    <script src="../Script.js" defer></script>
+</head>
+<body>
+<main>
+    <img class="app-icon" src="../Icon.png" width="128" height="128" alt="">
+
+    <h1>Superteam Earn Dark</h1>
+    <p class="tagline">Dark mode and full theming for Superteam&nbsp;Earn.</p>
+
+    <!-- ── iOS / iPadOS ─────────────────────────────────────────
+         The system gives us no API to toggle the extension or deep-link
+         into its pane, so the only useful thing this app can do is spell
+         out the walk. Both routes are listed because the Safari one is
+         faster but only exists once a Safari window is open. -->
+    <section class="platform-ios card">
+        <h2>Turn it on in Safari</h2>
+        <ol>
+            <li>Open <b>Safari</b> and go to <b>superteam.fun/earn</b>.</li>
+            <li>Tap the <b>extensions</b> button in the address bar — the puzzle-piece icon. On iOS&nbsp;16 and&nbsp;17 it lives inside the <b>AA</b> page settings menu instead.</li>
+            <li>Tap <b>Manage Extensions</b>, then switch <b>Superteam Earn Dark</b> on.</li>
+            <li>Tap the extensions button again, choose <b>Superteam Earn Dark</b>, and pick <b>Always Allow</b> → <b>Always Allow on This Website</b>.</li>
+        </ol>
+        <p class="alt">Or from the Settings app: <b>Apps</b> › <b>Safari</b> › <b>Extensions</b> › <b>Superteam Earn Dark</b>.</p>
+    </section>
+
+    <!-- ── macOS ────────────────────────────────────────────────
+         Here the app CAN hand the user straight to the right pane, so
+         the button leads and the steps are the fallback. -->
+    <section class="platform-mac card">
+        <h2 class="state-unknown">Turn it on in Safari</h2>
+        <h2 class="state-on">The extension is on</h2>
+        <h2 class="state-off">The extension is off</h2>
+
+        <p class="state-unknown">Enable Superteam Earn Dark in Safari’s Extensions settings, then allow it on superteam.fun.</p>
+        <p class="state-on">Superteam Earn Dark is running. You can turn it off again in Safari’s Extensions settings.</p>
+        <p class="state-off">Superteam Earn Dark is installed but switched off. Turn it on in Safari’s Extensions settings.</p>
+
+        <button class="open-preferences">Quit and Open Safari Extensions Preferences…</button>
+
+        <p class="alt">Then open <b>superteam.fun/earn</b> and grant the extension access to the site when Safari asks.</p>
+    </section>
+
+    <!-- Same feature list either way, but the control is reached
+         differently: a toolbar button on macOS, the address-bar extensions
+         button on iOS, where extensions have no toolbar of their own. -->
+    <section class="card usage">
+        <h2>Once it’s on</h2>
+        <p class="platform-mac">Click the <b>Superteam Earn Dark</b> button in Safari’s toolbar to switch themes, pick one of the 8 presets, save your own, set per-element colours, or add a wallpaper.</p>
+        <p class="platform-ios">Tap the <b>extensions</b> button in the address bar and choose <b>Superteam Earn Dark</b> to switch themes, pick one of the 8 presets, save your own, set per-element colours, or add a wallpaper.</p>
+    </section>
+
+    <p class="privacy">Every setting stays on this device. The extension collects nothing and talks to no server.</p>
+</main>
+</body>
+</html>

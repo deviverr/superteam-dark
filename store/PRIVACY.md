@@ -7,8 +7,8 @@ _Last updated: 2026-08-08_
 ## What the extension stores
 All of your settings — dark-mode state, selected theme/preset, custom colors,
 font size, hidden sections, per-page overrides, and wallpaper — are
-saved **locally on your own device** using the browser's `chrome.storage.local`
-API. This data never leaves your machine and is never sent to us or any third
+saved **locally on your own device** using the browser's extension storage
+API (`storage.local`). This data never leaves your machine and is never sent to us or any third
 party.
 
 ## What the extension accesses
@@ -23,6 +23,11 @@ party.
 | `storage` | Save your theme settings locally on your device. |
 | `alarms` | Re-check the clock for time-based (scheduled) dark mode. |
 | `host_permissions: superteam.fun/earn*` | Apply the theme on Superteam Earn pages only. |
+
+On Firefox this is declared in the manifest as
+`browser_specific_settings.gecko.data_collection_permissions: { "required": ["none"] }`
+— Mozilla's machine-readable statement that the add-on collects and transmits
+no data, which is what the sections above describe in words.
 
 ## Network
 The extension makes **no network requests**. If you set a wallpaper via a

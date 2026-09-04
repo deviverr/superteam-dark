@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Superteam Earn Dark",
-  "version": "1.7",
-  "description": "Full customization for Superteam Earn — dark mode, 8 presets, named custom themes, per-element colors, wallpaper, and more.",
+  "version": "1.7.1",
+  "description": "Dark mode for Superteam Earn with 8 presets, custom themes, per-element colors, wallpapers, and font scaling.",
   "icons": {
     "16": "icons/icon16.png",
     "32": "icons/icon32.png",
@@ -25,7 +25,7 @@
   "content_scripts": [
     {
       "matches": ["*://superteam.fun/earn*", "*://*.superteam.fun/earn*"],
-      "js": ["content/content.js"],
+      "js": ["shared/browser-compat.js", "content/content.js"],
       "css": ["content/dark.css"],
       "run_at": "document_start"
     }
