@@ -109,14 +109,16 @@ of the Superteam Earn website (superteam.fun/earn).
       mobile, SPA per-page overrides, popup dialogs and theme CRUD, wallpaper
       rendering and URL probing, toolbar interactions
 - [x] Package verified byte-identical to source; 12 files, no dev assets included
-- [ ] Load `dist/superteam-earn-dark-1.6.zip` via chrome://extensions →
-      "Load unpacked" (unzip first) and smoke-test on superteam.fun/earn
+- [ ] Load `dist/chrome/unpacked/` via chrome://extensions → "Load unpacked"
+      and smoke-test on superteam.fun/earn
 - [ ] Push the repo so the privacy-policy URL serves the current file
 - [ ] Upload zip, fill fields above, attach the 5 screenshots, submit for review
 
-## Known issue (not blocking)
-One rotating "Become a Sponsor" banner slide (labels seen once: "Post for Free",
-"Writing", "Hype Videos") measured low contrast in a single automated run and
-could not be reproduced across 13 further loads — that slide is served
-intermittently. Worth re-checking if it reappears; every other surface audited
-clean across all 8 presets.
+## Resolved in 1.7 (was the 1.6 known issue)
+The intermittent low-contrast reading on the "Become a Sponsor" hero slide is
+fixed. Root cause: the logged-out home hero is a shadcn carousel whose slides
+supply their own artwork and foreground palette (a light `#00CCFE → #A6EDFF`
+gradient with black text, and a photographic banner with white text). The
+global token rules were recolouring those foregrounds while leaving the slide
+backgrounds untouched. Slides are now excluded from the token, generic-button
+and arbitrary-hex rules, so they render as the site draws them.

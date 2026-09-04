@@ -1,0 +1,143 @@
+/* Container app landing page.
+   Palette is the extension's own GitHub-dark default so the app and the
+   themed site read as one product. It is dark in both appearances by
+   design — a light container for a dark-mode extension looks broken. */
+
+* {
+    -webkit-user-select: none;
+    -webkit-user-drag: none;
+    cursor: default;
+    box-sizing: border-box;
+}
+
+:root {
+    color-scheme: dark;
+
+    --bg:      #0d1117;
+    --bg2:     #161b22;
+    --border:  #30363d;
+    --text:    #e6edf3;
+    --muted:   #8b949e;
+    --accent:  #5522e0;
+
+    --spacing: 20px;
+    --radius:  12px;
+}
+
+html { height: 100%; }
+
+body {
+    margin: 0;
+    min-height: 100%;
+    padding: calc(var(--spacing) * 1.5) var(--spacing);
+
+    background: var(--bg);
+    color: var(--text);
+    font: -apple-system-short-body;
+    font-size: 15px;
+    line-height: 1.5;
+    -webkit-text-size-adjust: 100%;
+}
+
+main {
+    max-width: 460px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing);
+    text-align: center;
+}
+
+.app-icon {
+    border-radius: 22%;
+    margin-bottom: calc(var(--spacing) * -0.5);
+}
+
+h1 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+}
+
+.tagline {
+    margin: 0;
+    color: var(--muted);
+}
+
+.card {
+    width: 100%;
+    margin: 0;
+    padding: var(--spacing);
+
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    text-align: left;
+}
+
+.card h2 {
+    margin: 0 0 10px;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.card p { margin: 0; color: var(--muted); }
+
+.card ol {
+    margin: 0;
+    padding-left: 1.35em;
+    color: var(--muted);
+}
+
+.card ol li + li { margin-top: 8px; }
+
+.card b { color: var(--text); font-weight: 600; }
+
+.alt {
+    margin-top: 12px !important;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+    font-size: 13px;
+}
+
+button {
+    -webkit-appearance: none;
+    appearance: none;
+    display: block;
+    width: 100%;
+    margin: 14px 0 0;
+    padding: 11px 16px;
+
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+button:hover  { filter: brightness(1.12); }
+button:active { filter: brightness(0.92); }
+
+.privacy {
+    margin: 0;
+    color: var(--muted);
+    font-size: 12px;
+}
+
+/* ── Platform / state visibility ───────────────────────────────
+   Contract with ViewController.swift: it calls show('ios') or
+   show('mac'[, isEnabled, useSettings]), which sets these classes on
+   <body>. Everything platform- or state-specific stays hidden until it
+   does, so the page never flashes the wrong instructions. */
+
+body:not(.platform-mac, .platform-ios) :is(.platform-mac, .platform-ios) { display: none; }
+body.platform-ios .platform-mac { display: none; }
+body.platform-mac .platform-ios { display: none; }
+
+body:not(.state-on, .state-off) :is(.state-on, .state-off) { display: none; }
+body.state-on  :is(.state-off, .state-unknown) { display: none; }
+body.state-off :is(.state-on,  .state-unknown) { display: none; }
