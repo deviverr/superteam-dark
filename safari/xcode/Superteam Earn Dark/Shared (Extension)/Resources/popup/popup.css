@@ -1,0 +1,681 @@
+/* ── Reset ─────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ── Root ──────────────────────────────────────────────────── */
+:root {
+  --bg:        #0d1117;
+  --bg2:       #161b22;
+  --bg3:       #21262d;
+  --border:    #30363d;
+  --text:      #e6edf3;
+  --muted:     #8b949e;
+  --accent:    #9945ff;
+  --accent2:   #14f195;
+  --success:   #3fb950;
+  --radius:    8px;
+  --radius-sm: 6px;
+}
+
+html, body {
+  width: 320px;
+  max-width: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100px;
+}
+
+/* ── Header — title only ───────────────────────────────────── */
+.popup-header {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px 10px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg2);
+}
+
+.header-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-size: 11px;
+}
+
+/* ── Tabs ──────────────────────────────────────────────────── */
+.tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg2);
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 9px 0;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.tab-btn:hover { color: var(--text); }
+
+.tab-btn.active {
+  color: var(--text);
+  border-bottom-color: var(--accent);
+}
+
+/* ── Panels ────────────────────────────────────────────────── */
+.tab-panel {
+  display: none;
+  padding: 14px 16px;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 480px;
+  overflow-y: auto;
+}
+
+.tab-panel.active { display: flex; }
+
+/* ── Section title ─────────────────────────────────────────── */
+.section-title {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--muted);
+  margin-top: 14px;
+  margin-bottom: 4px;
+}
+
+.tab-panel > .section-title:first-child { margin-top: 0; }
+
+/* ── Row ───────────────────────────────────────────────────── */
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+}
+
+.row-toggle {
+  border-bottom: 1px solid var(--border);
+}
+
+.row.compact { padding: 6px 0; }
+
+.row-label {
+  font-size: 13px;
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.row-sublabel {
+  font-size: 10px;
+  color: var(--muted);
+  font-weight: 400;
+}
+
+/* ── Toggle switch ─────────────────────────────────────────── */
+.toggle {
+  position: relative;
+  display: inline-block;
+  width: 40px;
+  height: 22px;
+  flex-shrink: 0;
+}
+
+.toggle.small { width: 32px; height: 18px; }
+
+.toggle input { opacity: 0; width: 0; height: 0; }
+
+.slider {
+  position: absolute;
+  inset: 0;
+  background: var(--bg3);
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  transition: background 0.2s;
+  cursor: pointer;
+}
+
+.slider::before {
+  content: '';
+  position: absolute;
+  left: 3px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 14px;
+  height: 14px;
+  background: var(--muted);
+  border-radius: 50%;
+  transition: transform 0.2s, background 0.2s;
+}
+
+.toggle.small .slider::before { width: 10px; height: 10px; }
+
+.toggle input:checked + .slider {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.toggle input:checked + .slider::before {
+  transform: translateY(-50%) translateX(18px);
+  background: #fff;
+}
+
+.toggle.small input:checked + .slider::before {
+  transform: translateY(-50%) translateX(14px);
+}
+
+/* ── Radio rows ────────────────────────────────────────────── */
+.radio-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 7px 0;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+}
+
+.radio-row input[type="radio"] {
+  margin-top: 3px;
+  accent-color: var(--accent);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.radio-label { display: flex; flex-direction: column; gap: 1px; }
+.radio-name  { font-size: 13px; color: var(--text); }
+.radio-desc  { font-size: 11px; color: var(--muted); }
+
+/* ── Preset themes row ─────────────────────────────────────── */
+.preset-row {
+  display: flex;
+  gap: 5px;
+  padding: 4px 0;
+}
+
+.preset-btn {
+  flex: 1;
+  padding: 6px 4px 5px;
+  font-size: 10px;
+  font-weight: 500;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--bg3);
+  color: var(--muted);
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+  white-space: nowrap;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.preset-btn::before {
+  content: '';
+  display: block;
+  width: 22px;
+  height: 14px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  background: linear-gradient(135deg, var(--preset-bg, var(--bg3)) 50%, var(--preset-swatch, var(--border)) 50%);
+  flex-shrink: 0;
+}
+
+.preset-btn:hover {
+  border-color: var(--accent);
+  color: var(--text);
+  background: var(--bg2);
+}
+
+.preset-btn.active {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--bg2);
+}
+
+/* Per-preset swatch colors (bg + accent, two-tone diagonal swatch) */
+.preset-btn[data-preset="github"]     { --preset-bg: #0d1117; --preset-swatch: #5522e0; }
+.preset-btn[data-preset="amoled"]     { --preset-bg: #000000; --preset-swatch: #ffffff; }
+.preset-btn[data-preset="nord"]       { --preset-bg: #2e3440; --preset-swatch: #88c0d0; }
+.preset-btn[data-preset="dracula"]    { --preset-bg: #282a36; --preset-swatch: #bd93f9; }
+.preset-btn[data-preset="catppuccin"] { --preset-bg: #1e1e2e; --preset-swatch: #cba6f7; }
+.preset-btn[data-preset="tokyonight"] { --preset-bg: #1a1b26; --preset-swatch: #7aa2f7; }
+.preset-btn[data-preset="gruvbox"]    { --preset-bg: #282828; --preset-swatch: #d3869b; }
+.preset-btn[data-preset="onedark"]    { --preset-bg: #282c34; --preset-swatch: #61afef; }
+
+.custom-theme-btn {
+  position: relative;
+}
+
+.custom-theme-delete,
+.custom-theme-rename {
+  position: absolute;
+  top: -5px;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 13px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.custom-theme-delete { right: -5px; }
+.custom-theme-rename { right: 13px; font-size: 9px; }
+
+.custom-theme-delete:hover {
+  background: #f85149;
+  border-color: #f85149;
+  color: #fff;
+}
+
+.custom-theme-rename:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+#custom-theme-row {
+  flex-wrap: wrap;
+  display: none; /* toggled to flex by renderCustomThemes() when non-empty */
+}
+
+/* ── Color rows ────────────────────────────────────────────── */
+.color-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 0;
+}
+
+.color-label {
+  font-size: 13px;
+  color: var(--text);
+  min-width: 70px;
+}
+
+.color-input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+input[type="color"] {
+  width: 32px;
+  height: 28px;
+  padding: 2px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg3);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.color-text {
+  width: 74px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-size: 12px;
+  font-family: monospace;
+  padding: 4px 6px;
+}
+
+.color-text:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+/* ── Font size ─────────────────────────────────────────────── */
+.font-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+}
+
+.font-small  { font-size: 11px; color: var(--muted); }
+.font-large  { font-size: 17px; color: var(--muted); }
+.font-value  { font-size: 11px; color: var(--muted); min-width: 32px; text-align: right; }
+
+.font-slider {
+  flex: 1;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.logo-actions {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+/* ── URL input row ─────────────────────────────────────────── */
+.url-row {
+  display: flex;
+  gap: 6px;
+  padding: 3px 0;
+}
+
+.url-input {
+  flex: 1;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-size: 11px;
+  padding: 4px 8px;
+  min-width: 0;
+}
+
+.url-input::placeholder { color: var(--muted); }
+
+.url-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+/* ── Buttons ────────────────────────────────────────────────── */
+.btn-small {
+  display: inline-block;
+  padding: 4px 10px;
+  font-size: 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--bg3);
+  color: var(--text);
+  cursor: pointer;
+  transition: background 0.15s;
+  user-select: none;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.btn-small:hover  { background: var(--border); }
+.btn-ghost        { background: transparent; }
+.btn-ghost:hover  { background: var(--bg3); }
+
+/* Save / Reload row */
+.action-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.btn-half {
+  flex: 1;
+  padding: 7px;
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+}
+
+.btn-half:hover     { color: var(--text); border-color: var(--text); }
+
+.btn-accent {
+  background: var(--accent);
+  color: #fff !important;
+  border-color: var(--accent) !important;
+  transition: opacity 0.15s !important;
+}
+
+.btn-accent:hover { opacity: 0.88; }
+
+.btn-full {
+  width: 100%;
+  padding: 7px;
+  font-size: 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  margin-top: 8px;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.btn-full:hover { color: var(--text); border-color: var(--text); }
+
+.btn-danger {
+  color: #f85149;
+  border-color: #4a2224;
+}
+
+.btn-danger:hover {
+  color: #fff;
+  background: #f85149;
+  border-color: #f85149;
+}
+
+/* ── Settings tab ──────────────────────────────────────────── */
+.settings-desc {
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 3px;
+}
+
+.time-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 0;
+}
+
+.time-label { font-size: 13px; color: var(--text); }
+
+.time-input {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-size: 13px;
+  padding: 5px 8px;
+  cursor: pointer;
+  color-scheme: dark;
+}
+
+.time-input:focus { outline: none; border-color: var(--accent); }
+
+/* ── Page group tag (inline with section-title) ────────────── */
+.page-group-tag {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 6px;
+  font-size: 9px;
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: 0;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--accent);
+  vertical-align: middle;
+}
+
+/* ── About block ──────────────────────────────────────────── */
+.about-block {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding-bottom: 4px;
+}
+
+/* ── In-popup dialog ───────────────────────────────────────────
+   Stands in for window.prompt/confirm, which Chrome suppresses inside
+   an extension action popup. Fixed to the popup viewport so it covers
+   whichever tab panel is scrolled into view. */
+.dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.dialog-backdrop[hidden] { display: none; }
+
+.dialog {
+  width: 100%;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg2);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+}
+
+.dialog-message {
+  margin-bottom: 12px;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--text);
+  white-space: pre-line;
+}
+
+.dialog-input {
+  width: 100%;
+  margin-bottom: 12px;
+  padding: 7px 9px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg3);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 13px;
+}
+
+.dialog-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.dialog-input[hidden] { display: none; }
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.dialog-btn {
+  padding: 6px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg3);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.dialog-btn:hover { background: var(--border); }
+
+.dialog-btn-primary {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #fff;
+}
+
+.dialog-btn-primary:hover { filter: brightness(1.1); }
+
+/* Shown when a pasted wallpaper URL is refused by the site's img-src
+   policy — without it the wallpaper just silently never appears. */
+.wallpaper-warning {
+  margin: 2px 0 6px;
+  padding: 7px 9px;
+  border: 1px solid #7a4a1a;
+  border-radius: var(--radius-sm);
+  background: rgba(217, 138, 0, 0.12);
+  color: #e0b070;
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.wallpaper-warning[hidden] { display: none; }
+
+/* The slider end-markers and the live value all used --muted, so on the
+   wallpaper row the "60%" maximum read as a second value sitting next to
+   "15%", the actual one. Give the live value the foreground colour so
+   it's unmistakably the reading rather than another tick label. */
+#font-size-label,
+#wallpaper-opacity-label {
+  color: var(--text);
+  font-weight: 600;
+}
+
+/* ── Full-screen popup presentations (mobile) ──────────────────
+   On desktop the popover is sized to the page, so the 320px above is
+   exactly the window width and this query never matches. Both mobile
+   hosts instead present the extension UI at device width — iOS as a
+   sheet, Firefox for Android as a full page — which leaves a 320px body
+   stranded in a ~390px viewport. So fill it, and grow the controls that
+   were sized for a mouse to a 44pt touch target while we're there. */
+@media (min-width: 360px) {
+  html, body {
+    width: 100%;
+    font-size: 15px;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  /* Sheets scroll as one surface; let the content own the height. */
+  body { min-height: 100vh; }
+
+  /* Apple's 44pt minimum. These are the only hit targets under it. */
+  .swatch,
+  .toggle,
+  .preset-chip,
+  button,
+  select,
+  input[type="text"],
+  input[type="time"],
+  input[type="number"] {
+    min-height: 44px;
+  }
+
+  .toggle.small { min-height: 32px; }
+
+  /* Range thumbs stay under the finger on a slider that now spans the
+     full sheet width rather than a 320px column. */
+  input[type="range"] { height: 44px; }
+
+  /* iOS zooms the whole sheet when a focused field is under 16px. */
+  input, select, textarea { font-size: 16px; }
+
+  /* The desktop 480px cap strands the rest of a full-height mobile
+     viewport and nests a second scrollbar inside the page. Let the panel
+     run to the bottom instead, below the header and tab strip. dvh keeps
+     it correct while Android's URL bar collapses; vh is the fallback. */
+  .tab-panel {
+    max-height: calc(100vh - 96px);
+    max-height: calc(100dvh - 96px);
+  }
+}

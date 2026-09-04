@@ -1,0 +1,977 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		D7C4E9F5304761C6008AA765 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7C4E9F4304761C6008AA765 /* AppDelegate.swift */; };
+		D7C4E9F7304761C6008AA765 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7C4E9F6304761C6008AA765 /* SceneDelegate.swift */; };
+		D7C4E9FA304761C6008AA765 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D7C4E9F8304761C6008AA765 /* LaunchScreen.storyboard */; };
+		D7C4E9FD304761C6008AA765 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D7C4E9FB304761C6008AA765 /* Main.storyboard */; };
+		D7C4EA06304761C6008AA765 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7C4EA05304761C6008AA765 /* AppDelegate.swift */; };
+		D7C4EA09304761C6008AA765 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D7C4EA07304761C6008AA765 /* Main.storyboard */; };
+		D7C4EA10304761C6008AA765 /* Superteam Earn Dark Extension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = D7C4EA0F304761C6008AA765 /* Superteam Earn Dark Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		D7C4EA1A304761C6008AA765 /* Superteam Earn Dark Extension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = D7C4EA19304761C6008AA765 /* Superteam Earn Dark Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		D7C4EA1F304761C6008AA765 /* Main.html in Resources */ = {isa = PBXBuildFile; fileRef = D7C4E9E4304761C3008AA765 /* Main.html */; };
+		D7C4EA20304761C6008AA765 /* Main.html in Resources */ = {isa = PBXBuildFile; fileRef = D7C4E9E4304761C3008AA765 /* Main.html */; };
+		D7C4EA21304761C6008AA765 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = D7C4E9E6304761C3008AA765 /* Icon.png */; };
+		D7C4EA22304761C6008AA765 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = D7C4E9E6304761C3008AA765 /* Icon.png */; };
+		D7C4EA23304761C6008AA765 /* Style.css in Resources */ = {isa = PBXBuildFile; fileRef = D7C4E9E7304761C3008AA765 /* Style.css */; };
+		D7C4EA24304761C6008AA765 /* Style.css in Resources */ = {isa = PBXBuildFile; fileRef = D7C4E9E7304761C3008AA765 /* Style.css */; };
+		D7C4EA25304761C6008AA765 /* Script.js in Resources */ = {isa = PBXBuildFile; fileRef = D7C4E9E8304761C3008AA765 /* Script.js */; };
+		D7C4EA26304761C6008AA765 /* Script.js in Resources */ = {isa = PBXBuildFile; fileRef = D7C4E9E8304761C3008AA765 /* Script.js */; };
+		D7C4EA27304761C6008AA765 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7C4E9E9304761C3008AA765 /* ViewController.swift */; };
+		D7C4EA28304761C6008AA765 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7C4E9E9304761C3008AA765 /* ViewController.swift */; };
+		D7C4EA29304761C6008AA765 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D7C4E9EA304761C6008AA765 /* Assets.xcassets */; };
+		D7C4EA2A304761C6008AA765 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D7C4E9EA304761C6008AA765 /* Assets.xcassets */; };
+		D7C4EA2B304761C6008AA765 /* SafariWebExtensionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7C4E9EC304761C6008AA765 /* SafariWebExtensionHandler.swift */; };
+		D7C4EA2C304761C6008AA765 /* SafariWebExtensionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7C4E9EC304761C6008AA765 /* SafariWebExtensionHandler.swift */; };
+		D7C4EA45304761C6008AA765 /* background in Resources */ = {isa = PBXBuildFile; fileRef = D7C4EA3E304761C6008AA765 /* background */; };
+		D7C4EA46304761C6008AA765 /* popup in Resources */ = {isa = PBXBuildFile; fileRef = D7C4EA3F304761C6008AA765 /* popup */; };
+		D7C4EA47304761C6008AA765 /* content in Resources */ = {isa = PBXBuildFile; fileRef = D7C4EA40304761C6008AA765 /* content */; };
+		D7C4EA48304761C6008AA765 /* shared in Resources */ = {isa = PBXBuildFile; fileRef = D7C4EA41304761C6008AA765 /* shared */; };
+		D7C4EA49304761C6008AA765 /* icons in Resources */ = {isa = PBXBuildFile; fileRef = D7C4EA42304761C6008AA765 /* icons */; };
+		D7C4EA4A304761C6008AA765 /* manifest.json in Resources */ = {isa = PBXBuildFile; fileRef = D7C4EA43304761C6008AA765 /* manifest.json */; };
+		D7C4EA4B304761C6008AA765 /* assets in Resources */ = {isa = PBXBuildFile; fileRef = D7C4EA44304761C6008AA765 /* assets */; };
+		D7C4EA4C304761C6008AA765 /* background in Resources */ = {isa = PBXBuildFile; fileRef = D7C4EA3E304761C6008AA765 /* background */; };
+		D7C4EA4D304761C6008AA765 /* popup in Resources */ = {isa = PBXBuildFile; fileRef = D7C4EA3F304761C6008AA765 /* popup */; };
+		D7C4EA4E304761C6008AA765 /* content in Resources */ = {isa = PBXBuildFile; fileRef = D7C4EA40304761C6008AA765 /* content */; };
+		D7C4EA4F304761C6008AA765 /* shared in Resources */ = {isa = PBXBuildFile; fileRef = D7C4EA41304761C6008AA765 /* shared */; };
+		D7C4EA50304761C6008AA765 /* icons in Resources */ = {isa = PBXBuildFile; fileRef = D7C4EA42304761C6008AA765 /* icons */; };
+		D7C4EA51304761C6008AA765 /* manifest.json in Resources */ = {isa = PBXBuildFile; fileRef = D7C4EA43304761C6008AA765 /* manifest.json */; };
+		D7C4EA52304761C6008AA765 /* assets in Resources */ = {isa = PBXBuildFile; fileRef = D7C4EA44304761C6008AA765 /* assets */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		D7C4EA11304761C6008AA765 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D7C4E9DE304761C3008AA765 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D7C4EA0E304761C6008AA765;
+			remoteInfo = "Superteam Earn Dark Extension (iOS)";
+		};
+		D7C4EA1B304761C6008AA765 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D7C4E9DE304761C3008AA765 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D7C4EA18304761C6008AA765;
+			remoteInfo = "Superteam Earn Dark Extension (macOS)";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		D7C4EA32304761C6008AA765 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			dstPath = "";
+			dstSubfolder = PlugIns;
+			files = (
+				D7C4EA10304761C6008AA765 /* Superteam Earn Dark Extension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+		};
+		D7C4EA39304761C6008AA765 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			dstPath = "";
+			dstSubfolder = PlugIns;
+			files = (
+				D7C4EA1A304761C6008AA765 /* Superteam Earn Dark Extension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		D7C4E9E5304761C3008AA765 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = Base; path = Base.lproj/Main.html; sourceTree = "<group>"; };
+		D7C4E9E6304761C3008AA765 /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
+		D7C4E9E7304761C3008AA765 /* Style.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = Style.css; sourceTree = "<group>"; };
+		D7C4E9E8304761C3008AA765 /* Script.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = Script.js; sourceTree = "<group>"; };
+		D7C4E9E9304761C3008AA765 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		D7C4E9EA304761C6008AA765 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		D7C4E9EC304761C6008AA765 /* SafariWebExtensionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariWebExtensionHandler.swift; sourceTree = "<group>"; };
+		D7C4E9F1304761C6008AA765 /* Superteam Earn Dark.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Superteam Earn Dark.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D7C4E9F4304761C6008AA765 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		D7C4E9F6304761C6008AA765 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		D7C4E9F9304761C6008AA765 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		D7C4E9FC304761C6008AA765 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		D7C4E9FE304761C6008AA765 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D7C4EA03304761C6008AA765 /* Superteam Earn Dark.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Superteam Earn Dark.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D7C4EA05304761C6008AA765 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		D7C4EA08304761C6008AA765 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		D7C4EA0A304761C6008AA765 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D7C4EA0F304761C6008AA765 /* Superteam Earn Dark Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Superteam Earn Dark Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D7C4EA14304761C6008AA765 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D7C4EA19304761C6008AA765 /* Superteam Earn Dark Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Superteam Earn Dark Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D7C4EA1E304761C6008AA765 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D7C4EA3E304761C6008AA765 /* background */ = {isa = PBXFileReference; lastKnownFileType = folder; name = background; path = Resources/background; sourceTree = "<group>"; };
+		D7C4EA3F304761C6008AA765 /* popup */ = {isa = PBXFileReference; lastKnownFileType = folder; name = popup; path = Resources/popup; sourceTree = "<group>"; };
+		D7C4EA40304761C6008AA765 /* content */ = {isa = PBXFileReference; lastKnownFileType = folder; name = content; path = Resources/content; sourceTree = "<group>"; };
+		D7C4EA41304761C6008AA765 /* shared */ = {isa = PBXFileReference; lastKnownFileType = folder; name = shared; path = Resources/shared; sourceTree = "<group>"; };
+		D7C4EA42304761C6008AA765 /* icons */ = {isa = PBXFileReference; lastKnownFileType = folder; name = icons; path = Resources/icons; sourceTree = "<group>"; };
+		D7C4EA43304761C6008AA765 /* manifest.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = manifest.json; path = Resources/manifest.json; sourceTree = "<group>"; };
+		D7C4EA44304761C6008AA765 /* assets */ = {isa = PBXFileReference; lastKnownFileType = folder; name = assets; path = Resources/assets; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		D7C4E9EE304761C6008AA765 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			files = (
+			);
+		};
+		D7C4EA00304761C6008AA765 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			files = (
+			);
+		};
+		D7C4EA0C304761C6008AA765 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			files = (
+			);
+		};
+		D7C4EA16304761C6008AA765 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			files = (
+			);
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		D7C4E9DD304761C3008AA765 = {
+			isa = PBXGroup;
+			children = (
+				D7C4E9E2304761C3008AA765 /* Shared (App) */,
+				D7C4E9EB304761C6008AA765 /* Shared (Extension) */,
+				D7C4E9F3304761C6008AA765 /* iOS (App) */,
+				D7C4EA04304761C6008AA765 /* macOS (App) */,
+				D7C4EA13304761C6008AA765 /* iOS (Extension) */,
+				D7C4EA1D304761C6008AA765 /* macOS (Extension) */,
+				D7C4E9F2304761C6008AA765 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		D7C4E9E2304761C3008AA765 /* Shared (App) */ = {
+			isa = PBXGroup;
+			children = (
+				D7C4E9E9304761C3008AA765 /* ViewController.swift */,
+				D7C4E9EA304761C6008AA765 /* Assets.xcassets */,
+				D7C4E9E3304761C3008AA765 /* Resources */,
+			);
+			path = "Shared (App)";
+			sourceTree = "<group>";
+		};
+		D7C4E9E3304761C3008AA765 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				D7C4E9E4304761C3008AA765 /* Main.html */,
+				D7C4E9E6304761C3008AA765 /* Icon.png */,
+				D7C4E9E7304761C3008AA765 /* Style.css */,
+				D7C4E9E8304761C3008AA765 /* Script.js */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		D7C4E9EB304761C6008AA765 /* Shared (Extension) */ = {
+			isa = PBXGroup;
+			children = (
+				D7C4EA3D304761C6008AA765 /* Resources */,
+				D7C4E9EC304761C6008AA765 /* SafariWebExtensionHandler.swift */,
+			);
+			path = "Shared (Extension)";
+			sourceTree = "<group>";
+		};
+		D7C4E9F2304761C6008AA765 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				D7C4E9F1304761C6008AA765 /* Superteam Earn Dark.app */,
+				D7C4EA03304761C6008AA765 /* Superteam Earn Dark.app */,
+				D7C4EA0F304761C6008AA765 /* Superteam Earn Dark Extension.appex */,
+				D7C4EA19304761C6008AA765 /* Superteam Earn Dark Extension.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		D7C4E9F3304761C6008AA765 /* iOS (App) */ = {
+			isa = PBXGroup;
+			children = (
+				D7C4E9F4304761C6008AA765 /* AppDelegate.swift */,
+				D7C4E9F6304761C6008AA765 /* SceneDelegate.swift */,
+				D7C4E9F8304761C6008AA765 /* LaunchScreen.storyboard */,
+				D7C4E9FB304761C6008AA765 /* Main.storyboard */,
+				D7C4E9FE304761C6008AA765 /* Info.plist */,
+			);
+			path = "iOS (App)";
+			sourceTree = "<group>";
+		};
+		D7C4EA04304761C6008AA765 /* macOS (App) */ = {
+			isa = PBXGroup;
+			children = (
+				D7C4EA05304761C6008AA765 /* AppDelegate.swift */,
+				D7C4EA07304761C6008AA765 /* Main.storyboard */,
+				D7C4EA0A304761C6008AA765 /* Info.plist */,
+			);
+			path = "macOS (App)";
+			sourceTree = "<group>";
+		};
+		D7C4EA13304761C6008AA765 /* iOS (Extension) */ = {
+			isa = PBXGroup;
+			children = (
+				D7C4EA14304761C6008AA765 /* Info.plist */,
+			);
+			path = "iOS (Extension)";
+			sourceTree = "<group>";
+		};
+		D7C4EA1D304761C6008AA765 /* macOS (Extension) */ = {
+			isa = PBXGroup;
+			children = (
+				D7C4EA1E304761C6008AA765 /* Info.plist */,
+			);
+			path = "macOS (Extension)";
+			sourceTree = "<group>";
+		};
+		D7C4EA3D304761C6008AA765 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				D7C4EA3E304761C6008AA765 /* background */,
+				D7C4EA3F304761C6008AA765 /* popup */,
+				D7C4EA40304761C6008AA765 /* content */,
+				D7C4EA41304761C6008AA765 /* shared */,
+				D7C4EA42304761C6008AA765 /* icons */,
+				D7C4EA43304761C6008AA765 /* manifest.json */,
+				D7C4EA44304761C6008AA765 /* assets */,
+			);
+			name = Resources;
+			path = "Shared (Extension)";
+			sourceTree = SOURCE_ROOT;
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		D7C4E9F0304761C6008AA765 /* Superteam Earn Dark (iOS) */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D7C4EA33304761C6008AA765 /* Build configuration list for PBXNativeTarget "Superteam Earn Dark (iOS)" */;
+			buildPhases = (
+				D7C4E9ED304761C6008AA765 /* Sources */,
+				D7C4E9EE304761C6008AA765 /* Frameworks */,
+				D7C4E9EF304761C6008AA765 /* Resources */,
+				D7C4EA32304761C6008AA765 /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D7C4EA12304761C6008AA765 /* PBXTargetDependency */,
+			);
+			name = "Superteam Earn Dark (iOS)";
+			productName = "Superteam Earn Dark (iOS)";
+			productReference = D7C4E9F1304761C6008AA765 /* Superteam Earn Dark.app */;
+			productType = "com.apple.product-type.application";
+		};
+		D7C4EA02304761C6008AA765 /* Superteam Earn Dark (macOS) */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D7C4EA3A304761C6008AA765 /* Build configuration list for PBXNativeTarget "Superteam Earn Dark (macOS)" */;
+			buildPhases = (
+				D7C4E9FF304761C6008AA765 /* Sources */,
+				D7C4EA00304761C6008AA765 /* Frameworks */,
+				D7C4EA01304761C6008AA765 /* Resources */,
+				D7C4EA39304761C6008AA765 /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D7C4EA1C304761C6008AA765 /* PBXTargetDependency */,
+			);
+			name = "Superteam Earn Dark (macOS)";
+			productName = "Superteam Earn Dark (macOS)";
+			productReference = D7C4EA03304761C6008AA765 /* Superteam Earn Dark.app */;
+			productType = "com.apple.product-type.application";
+		};
+		D7C4EA0E304761C6008AA765 /* Superteam Earn Dark Extension (iOS) */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D7C4EA2F304761C6008AA765 /* Build configuration list for PBXNativeTarget "Superteam Earn Dark Extension (iOS)" */;
+			buildPhases = (
+				D7C4EA0B304761C6008AA765 /* Sources */,
+				D7C4EA0C304761C6008AA765 /* Frameworks */,
+				D7C4EA0D304761C6008AA765 /* Resources */,
+			);
+			buildRules = (
+			);
+			name = "Superteam Earn Dark Extension (iOS)";
+			productName = "Superteam Earn Dark Extension (iOS)";
+			productReference = D7C4EA0F304761C6008AA765 /* Superteam Earn Dark Extension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		D7C4EA18304761C6008AA765 /* Superteam Earn Dark Extension (macOS) */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D7C4EA36304761C6008AA765 /* Build configuration list for PBXNativeTarget "Superteam Earn Dark Extension (macOS)" */;
+			buildPhases = (
+				D7C4EA15304761C6008AA765 /* Sources */,
+				D7C4EA16304761C6008AA765 /* Frameworks */,
+				D7C4EA17304761C6008AA765 /* Resources */,
+			);
+			buildRules = (
+			);
+			name = "Superteam Earn Dark Extension (macOS)";
+			productName = "Superteam Earn Dark Extension (macOS)";
+			productReference = D7C4EA19304761C6008AA765 /* Superteam Earn Dark Extension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		D7C4E9DE304761C3008AA765 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2700;
+				LastUpgradeCheck = 2600;
+				TargetAttributes = {
+					D7C4E9F0304761C6008AA765 = {
+						CreatedOnToolsVersion = 27.0;
+					};
+					D7C4EA02304761C6008AA765 = {
+						CreatedOnToolsVersion = 27.0;
+					};
+					D7C4EA0E304761C6008AA765 = {
+						CreatedOnToolsVersion = 27.0;
+					};
+					D7C4EA18304761C6008AA765 = {
+						CreatedOnToolsVersion = 27.0;
+					};
+				};
+			};
+			buildConfigurationList = D7C4E9E1304761C3008AA765 /* Build configuration list for PBXProject "Superteam Earn Dark" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = D7C4E9DD304761C3008AA765;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = D7C4E9F2304761C6008AA765 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				D7C4E9F0304761C6008AA765 /* Superteam Earn Dark (iOS) */,
+				D7C4EA02304761C6008AA765 /* Superteam Earn Dark (macOS) */,
+				D7C4EA0E304761C6008AA765 /* Superteam Earn Dark Extension (iOS) */,
+				D7C4EA18304761C6008AA765 /* Superteam Earn Dark Extension (macOS) */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		D7C4E9EF304761C6008AA765 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			files = (
+				D7C4EA21304761C6008AA765 /* Icon.png in Resources */,
+				D7C4E9FA304761C6008AA765 /* LaunchScreen.storyboard in Resources */,
+				D7C4EA1F304761C6008AA765 /* Main.html in Resources */,
+				D7C4EA25304761C6008AA765 /* Script.js in Resources */,
+				D7C4EA29304761C6008AA765 /* Assets.xcassets in Resources */,
+				D7C4E9FD304761C6008AA765 /* Main.storyboard in Resources */,
+				D7C4EA23304761C6008AA765 /* Style.css in Resources */,
+			);
+		};
+		D7C4EA01304761C6008AA765 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			files = (
+				D7C4EA22304761C6008AA765 /* Icon.png in Resources */,
+				D7C4EA24304761C6008AA765 /* Style.css in Resources */,
+				D7C4EA09304761C6008AA765 /* Main.storyboard in Resources */,
+				D7C4EA26304761C6008AA765 /* Script.js in Resources */,
+				D7C4EA2A304761C6008AA765 /* Assets.xcassets in Resources */,
+				D7C4EA20304761C6008AA765 /* Main.html in Resources */,
+			);
+		};
+		D7C4EA0D304761C6008AA765 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			files = (
+				D7C4EA4E304761C6008AA765 /* content in Resources */,
+				D7C4EA4F304761C6008AA765 /* shared in Resources */,
+				D7C4EA52304761C6008AA765 /* assets in Resources */,
+				D7C4EA4C304761C6008AA765 /* background in Resources */,
+				D7C4EA50304761C6008AA765 /* icons in Resources */,
+				D7C4EA51304761C6008AA765 /* manifest.json in Resources */,
+				D7C4EA4D304761C6008AA765 /* popup in Resources */,
+			);
+		};
+		D7C4EA17304761C6008AA765 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			files = (
+				D7C4EA47304761C6008AA765 /* content in Resources */,
+				D7C4EA48304761C6008AA765 /* shared in Resources */,
+				D7C4EA4B304761C6008AA765 /* assets in Resources */,
+				D7C4EA45304761C6008AA765 /* background in Resources */,
+				D7C4EA49304761C6008AA765 /* icons in Resources */,
+				D7C4EA4A304761C6008AA765 /* manifest.json in Resources */,
+				D7C4EA46304761C6008AA765 /* popup in Resources */,
+			);
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		D7C4E9ED304761C6008AA765 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			files = (
+				D7C4EA27304761C6008AA765 /* ViewController.swift in Sources */,
+				D7C4E9F5304761C6008AA765 /* AppDelegate.swift in Sources */,
+				D7C4E9F7304761C6008AA765 /* SceneDelegate.swift in Sources */,
+			);
+		};
+		D7C4E9FF304761C6008AA765 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			files = (
+				D7C4EA28304761C6008AA765 /* ViewController.swift in Sources */,
+				D7C4EA06304761C6008AA765 /* AppDelegate.swift in Sources */,
+			);
+		};
+		D7C4EA0B304761C6008AA765 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			files = (
+				D7C4EA2B304761C6008AA765 /* SafariWebExtensionHandler.swift in Sources */,
+			);
+		};
+		D7C4EA15304761C6008AA765 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			files = (
+				D7C4EA2C304761C6008AA765 /* SafariWebExtensionHandler.swift in Sources */,
+			);
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		D7C4EA12304761C6008AA765 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D7C4EA0E304761C6008AA765 /* Superteam Earn Dark Extension (iOS) */;
+			targetProxy = D7C4EA11304761C6008AA765 /* PBXContainerItemProxy */;
+		};
+		D7C4EA1C304761C6008AA765 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D7C4EA18304761C6008AA765 /* Superteam Earn Dark Extension (macOS) */;
+			targetProxy = D7C4EA1B304761C6008AA765 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		D7C4E9E4304761C3008AA765 /* Main.html */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D7C4E9E5304761C3008AA765 /* Base */,
+			);
+			name = Main.html;
+			sourceTree = "<group>";
+		};
+		D7C4E9F8304761C6008AA765 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D7C4E9F9304761C6008AA765 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+		D7C4E9FB304761C6008AA765 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D7C4E9FC304761C6008AA765 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		D7C4EA07304761C6008AA765 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D7C4EA08304761C6008AA765 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		D7C4EA2D304761C6008AA765 /* Debug configuration for PBXProject "Superteam Earn Dark" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 4;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = VSUKBA84LT;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.7.1;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		D7C4EA2E304761C6008AA765 /* Release configuration for PBXProject "Superteam Earn Dark" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 4;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = VSUKBA84LT;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.7.1;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		D7C4EA30304761C6008AA765 /* Debug configuration for PBXNativeTarget "Superteam Earn Dark Extension (iOS)" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 4;
+				DEVELOPMENT_TEAM = VSUKBA84LT;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "iOS (Extension)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Superteam Earn Dark Extension";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.7.1;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.nekudev.earndark.Extension;
+				PRODUCT_NAME = "Superteam Earn Dark Extension";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		D7C4EA31304761C6008AA765 /* Release configuration for PBXNativeTarget "Superteam Earn Dark Extension (iOS)" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 4;
+				DEVELOPMENT_TEAM = VSUKBA84LT;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "iOS (Extension)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Superteam Earn Dark Extension";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.7.1;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.nekudev.earndark.Extension;
+				PRODUCT_NAME = "Superteam Earn Dark Extension";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		D7C4EA34304761C6008AA765 /* Debug configuration for PBXNativeTarget "Superteam Earn Dark (iOS)" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 4;
+				DEVELOPMENT_TEAM = VSUKBA84LT;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "iOS (App)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Superteam Earn Dark";
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.7.1;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+					"-framework",
+					WebKit,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.nekudev.earndark;
+				PRODUCT_NAME = "Superteam Earn Dark";
+				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		D7C4EA35304761C6008AA765 /* Release configuration for PBXNativeTarget "Superteam Earn Dark (iOS)" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 4;
+				DEVELOPMENT_TEAM = VSUKBA84LT;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "iOS (App)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Superteam Earn Dark";
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.7.1;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+					"-framework",
+					WebKit,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.nekudev.earndark;
+				PRODUCT_NAME = "Superteam Earn Dark";
+				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		D7C4EA37304761C6008AA765 /* Debug configuration for PBXNativeTarget "Superteam Earn Dark Extension (macOS)" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 4;
+				DEVELOPMENT_TEAM = VSUKBA84LT;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "macOS (Extension)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Superteam Earn Dark Extension";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.3;
+				MARKETING_VERSION = 1.7.1;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.nekudev.earndark.Extension;
+				PRODUCT_NAME = "Superteam Earn Dark Extension";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		D7C4EA38304761C6008AA765 /* Release configuration for PBXNativeTarget "Superteam Earn Dark Extension (macOS)" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 4;
+				DEVELOPMENT_TEAM = VSUKBA84LT;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "macOS (Extension)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Superteam Earn Dark Extension";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.3;
+				MARKETING_VERSION = 1.7.1;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.nekudev.earndark.Extension;
+				PRODUCT_NAME = "Superteam Earn Dark Extension";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		D7C4EA3B304761C6008AA765 /* Debug configuration for PBXNativeTarget "Superteam Earn Dark (macOS)" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 4;
+				DEVELOPMENT_TEAM = VSUKBA84LT;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "macOS (App)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Superteam Earn Dark";
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
+				INFOPLIST_KEY_NSMainStoryboardFile = Main;
+				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.3;
+				MARKETING_VERSION = 1.7.1;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+					"-framework",
+					WebKit,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.nekudev.earndark;
+				PRODUCT_NAME = "Superteam Earn Dark";
+				REGISTER_APP_GROUPS = YES;
+				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		D7C4EA3C304761C6008AA765 /* Release configuration for PBXNativeTarget "Superteam Earn Dark (macOS)" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 4;
+				DEVELOPMENT_TEAM = VSUKBA84LT;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "macOS (App)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Superteam Earn Dark";
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
+				INFOPLIST_KEY_NSMainStoryboardFile = Main;
+				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.3;
+				MARKETING_VERSION = 1.7.1;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+					"-framework",
+					WebKit,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.nekudev.earndark;
+				PRODUCT_NAME = "Superteam Earn Dark";
+				REGISTER_APP_GROUPS = YES;
+				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		D7C4E9E1304761C3008AA765 /* Build configuration list for PBXProject "Superteam Earn Dark" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D7C4EA2D304761C6008AA765 /* Debug configuration for PBXProject "Superteam Earn Dark" */,
+				D7C4EA2E304761C6008AA765 /* Release configuration for PBXProject "Superteam Earn Dark" */,
+			);
+			defaultConfigurationName = Release;
+		};
+		D7C4EA2F304761C6008AA765 /* Build configuration list for PBXNativeTarget "Superteam Earn Dark Extension (iOS)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D7C4EA30304761C6008AA765 /* Debug configuration for PBXNativeTarget "Superteam Earn Dark Extension (iOS)" */,
+				D7C4EA31304761C6008AA765 /* Release configuration for PBXNativeTarget "Superteam Earn Dark Extension (iOS)" */,
+			);
+			defaultConfigurationName = Release;
+		};
+		D7C4EA33304761C6008AA765 /* Build configuration list for PBXNativeTarget "Superteam Earn Dark (iOS)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D7C4EA34304761C6008AA765 /* Debug configuration for PBXNativeTarget "Superteam Earn Dark (iOS)" */,
+				D7C4EA35304761C6008AA765 /* Release configuration for PBXNativeTarget "Superteam Earn Dark (iOS)" */,
+			);
+			defaultConfigurationName = Release;
+		};
+		D7C4EA36304761C6008AA765 /* Build configuration list for PBXNativeTarget "Superteam Earn Dark Extension (macOS)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D7C4EA37304761C6008AA765 /* Debug configuration for PBXNativeTarget "Superteam Earn Dark Extension (macOS)" */,
+				D7C4EA38304761C6008AA765 /* Release configuration for PBXNativeTarget "Superteam Earn Dark Extension (macOS)" */,
+			);
+			defaultConfigurationName = Release;
+		};
+		D7C4EA3A304761C6008AA765 /* Build configuration list for PBXNativeTarget "Superteam Earn Dark (macOS)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D7C4EA3B304761C6008AA765 /* Debug configuration for PBXNativeTarget "Superteam Earn Dark (macOS)" */,
+				D7C4EA3C304761C6008AA765 /* Release configuration for PBXNativeTarget "Superteam Earn Dark (macOS)" */,
+			);
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = D7C4E9DE304761C3008AA765 /* Project object */;
+	validationLevel = 1;
+}

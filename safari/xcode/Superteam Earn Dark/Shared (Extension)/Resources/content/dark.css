@@ -1,0 +1,1397 @@
+/* Superteam Earn Dark Mode — injected by extension */
+
+html.se-dark {
+  --se-bg:           #0d1117;
+  --se-bg2:          #161b22;
+  --se-bg3:          #21262d;
+  --se-border:       #30363d;
+  --se-text:         #e6edf3;
+  --se-text-muted:   #a0aab4;
+  --se-accent:       #5522e0;
+  --se-accent2:      #7c3aed;
+  /* Derived companions to --se-accent. content.js recomputes both from
+     the live accent + background whenever the palette changes; these
+     defaults cover the built-in palette above.
+       --se-accent-fg   text drawn ON an accent-filled surface
+       --se-accent-text accent used AS text, lifted to stay legible on
+                        --se-bg (the raw accent is ~1.4:1 there) */
+  --se-accent-fg:    #ffffff;
+  --se-accent-text:  #a78bfa;
+  --se-link:         #a78bfa;
+  --se-danger:       #f85149;
+  --se-success:      #3fb950;
+  color-scheme: dark;
+}
+
+/* ── Smooth theme transition ──────────────────────────────────
+   Applies unconditionally (not gated to html.se-dark) so both the
+   light→dark AND dark→light directions animate — a transition rule
+   scoped only inside .se-dark would not be present in the "before"
+   state when switching dark mode off, and could look uneven. Colors
+   are cheap to animate (repaint only, no layout), so this is safe on
+   listing-heavy pages. Skipped for users who asked for less motion. */
+@media (prefers-reduced-motion: no-preference) {
+  html,
+  html body,
+  html #__next,
+  html main,
+  html header,
+  html nav,
+  html footer,
+  html aside,
+  html .sticky,
+  html a,
+  html button,
+  html input,
+  html textarea,
+  html select,
+  html [class*="bg-"],
+  html [class*="text-"],
+  html [class*="border-"] {
+    transition: background-color .18s ease, color .18s ease, border-color .18s ease, fill .18s ease, stroke .18s ease;
+  }
+}
+
+/* ── Base ──────────────────────────────────────────────────── */
+html.se-dark body,
+html.se-dark #__next,
+html.se-dark main {
+  background-color: var(--se-bg) !important;
+  color: var(--se-text) !important;
+}
+
+/* ── Wallpaper ─────────────────────────────────────────────────
+   Hung off the ROOT element, not <body>. A fixed body::before at
+   z-index:-1 still paints below the backgrounds of body's in-flow
+   block descendants — and #__next/main are given an opaque --se-bg
+   fill by the Base rule above, so the wallpaper was covered by the
+   page's own background and never visible at any opacity.
+   On html the pseudo-element sits directly above the canvas fill and
+   below every descendant, so switching those three surfaces to
+   transparent (only while .se-wallpaper is on, so the no-wallpaper
+   case is untouched) lets it show through the page gutters while
+   cards/nav keep their panel colours. */
+html.se-dark.se-wallpaper {
+  background-color: var(--se-bg) !important;
+}
+
+html.se-dark.se-wallpaper::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: var(--se-wallpaper-url, none);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: var(--se-wallpaper-opacity, 0.15);
+  z-index: -1;
+  pointer-events: none;
+}
+
+html.se-dark.se-wallpaper body,
+html.se-dark.se-wallpaper #__next,
+html.se-dark.se-wallpaper main,
+/* The app shell inside #__next is a full-height bg-neutral-100 div, so
+   the rules above alone still left an opaque sheet over the wallpaper.
+   min-h-screen is the reliable marker for a page-height shell — cards
+   and panels never carry it, so their fills are preserved. */
+html.se-dark.se-wallpaper [class*="min-h-screen"] {
+  background-color: transparent !important;
+}
+
+/* ── Nav / Header ──────────────────────────────────────────── */
+html.se-dark header,
+html.se-dark nav {
+  background-color: var(--se-bg2) !important;
+  border-color: var(--se-border) !important;
+  color: var(--se-text) !important;
+}
+
+/* Tailwind sticky navbar classes */
+html.se-dark .sticky {
+  background-color: var(--se-bg2) !important;
+}
+
+/* ── Backgrounds — exact Tailwind token matching ──────────────
+   IMPORTANT: these use [class~="..."] (whitespace-separated EXACT
+   token match), not [class*="..."] (substring match). Tailwind keeps
+   variant prefixes as part of the literal class token, e.g. an
+   element that is only "hover:bg-gray-100" (transparent at rest,
+   filled on hover) still contains the SUBSTRING "bg-gray-100" — so a
+   *= selector force-fills it permanently, which is exactly why nav
+   icon buttons, sidebar rows, dropdown items etc. showed a background
+   in dark mode that light mode never shows at rest. ~= only matches
+   when the token is its own whole class, so hover:/focus:/active:
+   variants are correctly left alone (they still work via the real
+   :hover/:focus rules further below).
+   Breakpoint variants (sm:/md:/lg:) are a different case — they are
+   unconditionally on above their width, so they DO want recolouring —
+   but they need naming one by one rather than a blanket *=, which would
+   drag the state variants back in. Earn currently ships none for
+   backgrounds; add explicit selectors here if that changes. The border
+   rules further down can and do use *=, for the reason given there. */
+html.se-dark [class~="bg-white"] {
+  background-color: var(--se-bg2) !important;
+}
+
+html.se-dark [class~="bg-gray-50"],
+html.se-dark [class~="bg-slate-50"] {
+  background-color: var(--se-bg2) !important;
+}
+
+html.se-dark [class~="bg-gray-100"],
+html.se-dark [class~="bg-slate-100"] {
+  background-color: var(--se-bg3) !important;
+}
+
+html.se-dark [class~="bg-gray-200"],
+html.se-dark [class~="bg-slate-200"] {
+  background-color: var(--se-bg3) !important;
+}
+
+/* Card/listing depth — white bg + shadow for separation */
+html.se-dark a[class~="bg-white"],
+html.se-dark div[class~="bg-white"] {
+  box-shadow: 0 1px 3px rgba(0,0,0,0.4) !important;
+}
+
+/* ── Hover states ───────────────────────────────────────────── */
+/* Lifted off --se-bg3 rather than equal to it. On AMOLED every surface
+   is #000, so a hover that just paints --se-bg3 is invisible; mixing a
+   little --se-text in gives a visible lift on AMOLED while staying a
+   subtle step above the panel colour on every other preset. */
+html.se-dark .hover\:bg-gray-100:hover,
+html.se-dark .hover\:bg-slate-100:hover {
+  background-color: color-mix(in srgb, var(--se-text) 9%, var(--se-bg3)) !important;
+}
+
+html.se-dark .hover\:bg-indigo-100:hover,
+html.se-dark .hover\:bg-indigo-200:hover {
+  background-color: color-mix(in srgb, var(--se-accent) 15%, transparent) !important;
+}
+
+html.se-dark .hover\:bg-slate-50:hover,
+html.se-dark .hover\:bg-white:hover {
+  background-color: color-mix(in srgb, var(--se-text) 7%, var(--se-bg2)) !important;
+}
+
+/* ── Text — per-shade mapping (exact token match, see note above) ── */
+html.se-dark [class~="text-black"] {
+  color: var(--se-text) !important;
+}
+
+html.se-dark [class~="text-white"] {
+  color: var(--se-text) !important;
+}
+
+html.se-dark [class~="text-slate-900"],
+html.se-dark [class~="text-slate-800"],
+html.se-dark [class~="text-slate-700"] {
+  color: var(--se-text) !important;
+}
+
+html.se-dark [class~="text-slate-600"],
+html.se-dark [class~="text-slate-500"] {
+  color: var(--se-text-muted) !important;
+}
+
+html.se-dark [class~="text-slate-400"],
+html.se-dark [class~="text-slate-300"] {
+  color: var(--se-text-muted) !important;
+}
+
+html.se-dark [class~="text-gray-900"],
+html.se-dark [class~="text-gray-800"] {
+  color: var(--se-text) !important;
+}
+
+html.se-dark [class~="text-gray-700"],
+html.se-dark [class~="text-gray-600"] {
+  color: var(--se-text-muted) !important;
+}
+
+html.se-dark [class~="text-gray-500"],
+html.se-dark [class~="text-gray-400"] {
+  color: var(--se-text-muted) !important;
+}
+
+/* Zinc text scale */
+html.se-dark [class~="text-zinc-900"],
+html.se-dark [class~="text-zinc-800"],
+html.se-dark [class~="text-zinc-700"] {
+  color: var(--se-text) !important;
+}
+
+html.se-dark [class~="text-zinc-600"],
+html.se-dark [class~="text-zinc-500"] {
+  color: var(--se-text-muted) !important;
+}
+
+html.se-dark [class~="text-zinc-400"],
+html.se-dark [class~="text-zinc-300"] {
+  color: var(--se-text-muted) !important;
+}
+
+/* ── Borders — specific colour tokens, not the nuclear [class*="border"] ──
+   These use substring matching where the background rules above
+   deliberately use exact-token matching, and that difference is on
+   purpose. A border-COLOUR utility is inert unless some other class sets
+   a border-width, so matching a prefixed variant can never draw a border
+   that light mode doesn't draw — the risk that makes *= wrong for bg-*
+   simply doesn't exist here. Exact matching, meanwhile, missed the
+   responsive variants: the main content column is
+   `lg:border-r lg:border-slate-100`, and since lg: is a breakpoint (not a
+   state) that border is permanently on at desktop widths — it rendered as
+   a near-white rule down the middle of the page. */
+html.se-dark [class*="border-slate-100"],
+html.se-dark [class*="border-slate-200"],
+html.se-dark [class*="border-slate-300"] {
+  border-color: var(--se-border) !important;
+}
+
+html.se-dark [class*="border-gray-200"],
+html.se-dark [class*="border-gray-300"] {
+  border-color: var(--se-border) !important;
+}
+
+html.se-dark hr,
+html.se-dark .divide-y > * + *,
+html.se-dark .border-t,
+html.se-dark .border-b {
+  border-color: var(--se-border) !important;
+}
+
+/* border-black/20 overlay borders — kept as substring match since the
+   Tailwind opacity-modifier suffix (/20 etc.) is part of the token, so
+   an exact-match ~= would never match it. */
+html.se-dark [class*="border-black"] {
+  border-color: var(--se-border) !important;
+}
+
+/* ── Inputs / Forms ─────────────────────────────────────────── */
+html.se-dark input:not([type="radio"]):not([type="checkbox"]):not([type="range"]):not([type="color"]),
+html.se-dark textarea,
+html.se-dark select {
+  background-color: var(--se-bg3) !important;
+  border-color: var(--se-border) !important;
+  color: var(--se-text) !important;
+}
+
+/* On AMOLED the input fill equals the page, so the border is the only
+   thing that makes the field a field — make sure one is always drawn. */
+html.se-dark input:not([type="radio"]):not([type="checkbox"]):not([type="range"]):not([type="color"]),
+html.se-dark textarea,
+html.se-dark select {
+  border-width: 1px !important;
+  border-style: solid !important;
+}
+
+html.se-dark input::placeholder,
+html.se-dark textarea::placeholder {
+  color: var(--se-text-muted) !important;
+}
+
+/* Input addons (the label-prefix boxes on forms) */
+html.se-dark .bg-slate-50,
+html.se-dark .bg-gray-50 {
+  background-color: var(--se-bg3) !important;
+}
+
+/* ── Buttons ────────────────────────────────────────────────── */
+/* Keep brand-purple CTAs — don't invert. The foreground is --se-accent-fg,
+   not a hardcoded #fff: several presets ship a light accent (Dracula
+   #bd93f9, Nord #88c0d0, One Dark #61afef) where white-on-accent leaves
+   the site's primary "Sign Up"/"Submit" buttons barely readable. */
+html.se-dark .bg-brand-purple {
+  background-color: var(--se-accent) !important;
+  color: var(--se-accent-fg, #fff) !important;
+}
+
+/* Accent as TEXT sits on --se-bg, so it uses the lifted --se-accent-text
+   (the raw accent measures ~1.4:1 against the default background). */
+html.se-dark .text-brand-purple {
+  color: var(--se-accent-text, var(--se-accent)) !important;
+}
+
+html.se-dark .hover\:text-brand-purple:hover {
+  color: var(--se-accent-text, var(--se-accent)) !important;
+}
+
+/* Generic buttons that aren't branded.
+   :not([class*="se-tb"]) excludes our own toolbar buttons — this rule is
+   !important and would otherwise flatten the sun/moon toggle's amber and
+   violet state colours to plain --se-text.
+   :not([data-slot="carousel-item"] *) excludes the home hero slides, whose
+   CTAs are part of the artwork: the sponsor slide's "Get Started" is white
+   text on its own black fill, and the "Sign Up" CTA is #3223A0 on white.
+   Both were being repainted --se-text, which is light — so one lost its
+   contrast against black and the other vanished into the white pill. */
+html.se-dark button:not([class*="bg-brand"]):not([class*="bg-indigo"]):not([class*="bg-red"]):not([class*="se-tb"]):not([data-slot="carousel-item"] *),
+html.se-dark [role="button"]:not([class*="se-tb"]):not([data-slot="carousel-item"] *) {
+  color: var(--se-text) !important;
+}
+
+/* Secondary/outline buttons */
+html.se-dark .bg-background,
+html.se-dark .border-input {
+  background-color: var(--se-bg3) !important;
+  border-color: var(--se-border) !important;
+  color: var(--se-text) !important;
+}
+
+html.se-dark .hover\:bg-accent:hover {
+  background-color: var(--se-bg3) !important;
+}
+
+/* ── Links ────────────────────────────────────────────────────
+   :not([class*="bg-"]) skips anchors styled as buttons. Tailwind only
+   puts a bg-* utility on an anchor when it is meant to read as a filled
+   control, and those carry their own foreground colour chosen against
+   that fill — repainting them link-violet produced e.g. violet-on-mint
+   at 1.5:1 on the /earn/agents CTA. Plain text links have no bg-* token
+   and are unaffected. */
+html.se-dark a:not([class*="bg-"]):not([class*="text-brand"]):not([class*="text-white"]) {
+  color: var(--se-link) !important;
+}
+
+html.se-dark a:hover:not([class*="bg-"]):not([class*="text-brand"]) {
+  color: var(--se-accent-text, var(--se-accent)) !important;
+}
+
+/* Nav links — keep them muted, not link-blue */
+html.se-dark nav a,
+html.se-dark header a {
+  color: var(--se-text-muted) !important;
+}
+
+html.se-dark nav a:hover,
+html.se-dark header a:hover {
+  color: var(--se-text) !important;
+}
+
+/* ── Sidebar ────────────────────────────────────────────────── */
+/* Superteam Earn's sidebar has no distinct fill in light mode — it's
+   transparent and blends into the page background. Match that instead
+   of boxing it in its own panel color (was --se-bg2, which made it
+   read as an unwanted filled section). */
+html.se-dark aside,
+html.se-dark [class*="sidebar"],
+html.se-dark [class*="Sidebar"] {
+  background-color: var(--se-bg) !important;
+  border-color: var(--se-border) !important;
+}
+
+/* ── Active badge/filter state — derive from accent var (color-mix: Chrome 111+) ── */
+html.se-dark [class~="bg-indigo-100"] {
+  background-color: color-mix(in srgb, var(--se-accent) 15%, transparent) !important;
+}
+
+html.se-dark [class~="bg-indigo-50"] {
+  background-color: color-mix(in srgb, var(--se-accent) 8%, transparent) !important;
+}
+
+html.se-dark [class~="bg-purple-50"] {
+  background-color: color-mix(in srgb, var(--se-accent) 8%, transparent) !important;
+}
+
+html.se-dark [class~="text-indigo-600"] {
+  color: color-mix(in srgb, var(--se-accent) 80%, white) !important;
+}
+
+html.se-dark [class~="border-indigo-300"],
+html.se-dark [class~="border-indigo-50"] {
+  border-color: color-mix(in srgb, var(--se-accent) 40%, transparent) !important;
+}
+
+html.se-dark .hover\:text-slate-600:hover,
+html.se-dark .hover\:text-slate-700:hover {
+  color: var(--se-text) !important;
+}
+
+/* White borders: make them disappear, don't recolour them.
+   Earn uses `border border-white` on the profile dropdown trigger and
+   `border-2 border-white` on the avatar inside it — white on a white
+   navbar, i.e. deliberately invisible. Mapping those to --se-border drew
+   a grey box around the profile button that light mode never shows.
+   `transparent` reproduces the light-mode result on any surface, because
+   the element's own background paints under its border box.
+   Exact-token matching here on purpose: border-white/40 and
+   border-white/50 are translucent outlines over hero imagery, where the
+   white IS meant to be seen, so they must not be caught. */
+html.se-dark [class~="border-white"] {
+  border-color: transparent !important;
+}
+
+/* shadcn/ui dropdown triggers (profile menu, and any future ones — this
+   data-slot attribute is a stable hook the site's component library sets
+   on every Radix dropdown trigger, so it covers new dropdowns the SPA adds
+   without needing new selectors). Base classList only covers :hover; the
+   site's own classes for :active and the open [data-state] variant render
+   light-mode colors that need separate overriding since pseudo-class and
+   attribute-selector CSS specificity doesn't fall back to a plain class rule. */
+html.se-dark [data-slot="dropdown-menu-trigger"]:hover,
+html.se-dark [data-slot="dropdown-menu-trigger"]:active,
+html.se-dark [data-slot="dropdown-menu-trigger"][data-state="open"] {
+  background-color: var(--se-bg3) !important;
+}
+
+/* ── Dropdowns / Modals / Overlays ─────────────────────────── */
+/* :not([class*="se-tb"]) excludes our OWN in-page toolbar (.se-tb-menu,
+   .se-tb-menu-item, .se-tb-menu-btn, ...) — those class names contain the
+   substring "menu" too, so without this exclusion this site-targeting
+   catch-all was fighting the toolbar's own .se-tb-menu-* rules further
+   below: it forced bg2/border/text onto the theme-menu trigger button
+   (should stay transparent, like the sun/moon toggle) and flattened the
+   active-theme's purple highlight to the same color as every other item. */
+html.se-dark [role="dialog"],
+html.se-dark [data-radix-popper-content-wrapper],
+html.se-dark [class*="modal"]:not([class*="se-tb"]),
+html.se-dark [class*="Modal"]:not([class*="se-tb"]),
+html.se-dark [class*="dropdown"]:not([class*="se-tb"]),
+html.se-dark [class*="Dropdown"]:not([class*="se-tb"]),
+html.se-dark [class*="popover"]:not([class*="se-tb"]),
+html.se-dark [class*="Popover"]:not([class*="se-tb"]),
+html.se-dark [class*="menu"]:not([class*="se-tb"]),
+html.se-dark [class*="Menu"]:not([class*="se-tb"]) {
+  background-color: var(--se-bg2) !important;
+  border-color: var(--se-border) !important;
+  color: var(--se-text) !important;
+}
+
+/* ── Badges / Tags / Pills ──────────────────────────────────── */
+html.se-dark [class*="badge"],
+html.se-dark [class*="Badge"],
+html.se-dark [class*="tag"],
+html.se-dark [class*="Tag"],
+html.se-dark [class*="pill"],
+html.se-dark [class*="Pill"],
+html.se-dark [class*="chip"],
+html.se-dark [class*="Chip"] {
+  background-color: var(--se-bg3) !important;
+  color: var(--se-text-muted) !important;
+  border-color: var(--se-border) !important;
+}
+
+/* ── White gradient overlays (fade-out effects) ───────────────
+   The site fades scroll edges with `from-white`/`via-white` overlays.
+   Two fixes over the previous version:
+     • substring, not exact-token, matching. Tailwind v4 writes opacity
+       modifiers into the token itself (`from-white/80 via-white/30`),
+       which a [class~=] selector never matches — those overlays kept
+       their literal white and showed as pale smudges at both ends of
+       the category-filter row.
+     • --se-bg2, not --se-bg. Every one of these overlays sits on a
+       panel, so fading toward the page background made them *darker*
+       than their surface: the "Recent Earners" fade rendered as a solid
+       dark band across the first row instead of a fade.
+   This is one of the few places substring matching is correct: a
+   hover:from-white variant should be recoloured too, since it also
+   only ever paints white. */
+html.se-dark [class*="from-white"] {
+  --tw-gradient-from: var(--se-bg2) !important;
+}
+
+html.se-dark [class*="to-white"] {
+  --tw-gradient-to: var(--se-bg2) !important;
+}
+
+html.se-dark [class*="via-white"] {
+  --tw-gradient-via: var(--se-bg2) !important;
+}
+
+/* ── Skeleton loaders ───────────────────────────────────────── */
+html.se-dark [class*="skeleton"],
+html.se-dark [class*="Skeleton"],
+html.se-dark [class*="shimmer"],
+html.se-dark [class*="loading"] {
+  background: linear-gradient(
+    90deg,
+    var(--se-bg2) 25%,
+    var(--se-bg3) 50%,
+    var(--se-bg2) 75%
+  ) !important;
+  background-size: 200% 100% !important;
+  animation: se-shimmer 1.5s infinite !important;
+}
+
+@keyframes se-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ── Scrollbar ──────────────────────────────────────────────── */
+html.se-dark ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+html.se-dark ::-webkit-scrollbar-track {
+  background: var(--se-bg);
+}
+
+html.se-dark ::-webkit-scrollbar-thumb {
+  background: var(--se-bg3);
+  border-radius: 4px;
+}
+
+html.se-dark ::-webkit-scrollbar-thumb:hover {
+  background: var(--se-border);
+}
+
+/* ── Selection ──────────────────────────────────────────────── */
+html.se-dark ::selection {
+  background: var(--se-accent);
+  color: #fff;
+}
+
+/* ── Hide-section helpers (toggled by JS) ─────────────────────
+   Deliberately NOT scoped to html.se-dark — hiding the nav/sidebar/
+   banner/footer is a declutter feature independent of the color theme,
+   so it must keep working when dark mode is off too. Applies instantly
+   via classList.toggle in content.js; no page reload involved.
+
+   These used to be written against semantic tags (nav, header, aside)
+   and *"sidebar"/*"banner" class substrings. Earn ships NONE of those:
+   its navbar is a pair of `div.sticky.top-0` wrappers (z-40 desktop,
+   z-50 mobile), its right rail is an unnamed `div.w-96.flex-col`, and
+   its promo blocks carry no "banner" token — so three of the four
+   toggles matched zero elements and appeared to do nothing, before or
+   after a reload. Only `footer` was ever real. The selectors below are
+   written against the structure Earn actually renders, with the old
+   semantic/substring selectors kept as a forward-compatible fallback
+   in case the markup gains them. */
+
+/* Nav — both sticky navbar wrappers. content.js re-mounts the toolbar as
+   a floating control when this is on, so dark mode stays togglable. */
+html.se-hide-nav nav,
+html.se-hide-nav header,
+html.se-hide-nav div.sticky.top-0 {
+  display: none !important;
+}
+
+/* Sidebar — Earn's right rail is `div.hidden.lg:flex > div.w-96.flex-col`.
+   Hiding the inner column alone leaves the empty flex parent still
+   claiming its gap, so prefer the parent via :has() (Chrome 105+) and
+   fall back to the column itself. */
+html.se-hide-sidebar aside,
+html.se-hide-sidebar [class*="sidebar"],
+html.se-hide-sidebar [class*="Sidebar"],
+html.se-hide-sidebar div:has(> div.w-96.flex-col),
+html.se-hide-sidebar div.w-96.flex-col {
+  display: none !important;
+}
+
+/* Banners — the welcome/hero strip, the promo cards, and any genuinely
+   named announcement bar. The hero is identified by the combination
+   Earn uses for it (a full-width rounded gradient strip), not by a
+   substring, so ordinary gradient buttons and pills are left alone. */
+html.se-hide-banner [class*="banner"],
+html.se-hide-banner [class*="Banner"],
+html.se-hide-banner [class*="announcement"],
+html.se-hide-banner [class*="alert"],
+html.se-hide-banner div[class*="rounded-xl"][class*="bg-linear-to-r"],
+html.se-hide-banner div[class*="rounded-xl"][class*="bg-gradient-to-r"],
+html.se-hide-banner a:has(img[src*="banner"]),
+html.se-hide-banner div:has(> img[src*="banner"]),
+html.se-hide-banner [data-slot="carousel"] {
+  display: none !important;
+}
+
+html.se-hide-footer footer,
+html.se-hide-footer [class*="footer"],
+html.se-hide-footer [class*="Footer"] {
+  display: none !important;
+}
+
+/* The floating toolbar is the only thing allowed to survive a hidden
+   nav — it is what puts dark mode back on. */
+html.se-hide-nav .se-toolbar-floating {
+  display: flex !important;
+}
+
+/* ── Custom font size ─────────────────────────────────────────
+   The slider used to set nothing but `font-size` on <body>, which on Earn
+   moved almost nothing: every text node carries a Tailwind text-* utility
+   with a hardcoded rem size, and that wins over an inherited body value.
+   The only things that visibly resized were the handful of elements with
+   no text utility at all — which is why the welcome banner appeared to be
+   the only thing the slider controlled.
+   So re-express each text utility Earn actually ships as its own rem size
+   multiplied by --se-font-scale (fontSize / 16, set in content.js). Both
+   font-size and line-height scale, so leading stays proportional instead
+   of going cramped at the top of the range.
+   Responsive variants are declared inside their own breakpoint so a
+   md:text-base doesn't leak down to mobile; the breakpoints are Tailwind's
+   defaults (sm 40rem, md 48rem, lg 64rem, xl 80rem).
+   The px var is kept for <body> so untagged text scales too. */
+html.se-dark body {
+  font-size: var(--se-font-size, 16px) !important;
+}
+html.se-dark .text-xxs {
+  font-size: calc(0.625rem * var(--se-font-scale, 1)) !important;
+  line-height: calc(0.875rem * var(--se-font-scale, 1)) !important;
+}
+html.se-dark .text-xs {
+  font-size: calc(0.75rem * var(--se-font-scale, 1)) !important;
+  line-height: calc(1rem * var(--se-font-scale, 1)) !important;
+}
+html.se-dark .text-sm {
+  font-size: calc(0.875rem * var(--se-font-scale, 1)) !important;
+  line-height: calc(1.25rem * var(--se-font-scale, 1)) !important;
+}
+html.se-dark .text-base {
+  font-size: calc(1rem * var(--se-font-scale, 1)) !important;
+  line-height: calc(1.5rem * var(--se-font-scale, 1)) !important;
+}
+html.se-dark .text-lg {
+  font-size: calc(1.125rem * var(--se-font-scale, 1)) !important;
+  line-height: calc(1.75rem * var(--se-font-scale, 1)) !important;
+}
+html.se-dark .text-xl {
+  font-size: calc(1.25rem * var(--se-font-scale, 1)) !important;
+  line-height: calc(1.75rem * var(--se-font-scale, 1)) !important;
+}
+html.se-dark .text-2xl {
+  font-size: calc(1.5rem * var(--se-font-scale, 1)) !important;
+  line-height: calc(2rem * var(--se-font-scale, 1)) !important;
+}
+html.se-dark .text-3xl {
+  font-size: calc(1.875rem * var(--se-font-scale, 1)) !important;
+  line-height: calc(2.25rem * var(--se-font-scale, 1)) !important;
+}
+html.se-dark .text-4xl {
+  font-size: calc(2.25rem * var(--se-font-scale, 1)) !important;
+  line-height: calc(2.5rem * var(--se-font-scale, 1)) !important;
+}
+html.se-dark .text-5xl {
+  font-size: calc(3rem * var(--se-font-scale, 1)) !important;
+}
+html.se-dark .text-\[0\.8rem\] {
+  font-size: calc(0.8rem * var(--se-font-scale, 1)) !important;
+  line-height: calc(1.15rem * var(--se-font-scale, 1)) !important;
+}
+
+@media (min-width: 40rem) {
+  html.se-dark .sm\:text-xxs {
+    font-size: calc(0.625rem * var(--se-font-scale, 1)) !important;
+    line-height: calc(0.875rem * var(--se-font-scale, 1)) !important;
+  }
+  html.se-dark .sm\:text-xs {
+    font-size: calc(0.75rem * var(--se-font-scale, 1)) !important;
+    line-height: calc(1rem * var(--se-font-scale, 1)) !important;
+  }
+  html.se-dark .sm\:text-sm {
+    font-size: calc(0.875rem * var(--se-font-scale, 1)) !important;
+    line-height: calc(1.25rem * var(--se-font-scale, 1)) !important;
+  }
+  html.se-dark .sm\:text-base {
+    font-size: calc(1rem * var(--se-font-scale, 1)) !important;
+    line-height: calc(1.5rem * var(--se-font-scale, 1)) !important;
+  }
+  html.se-dark .sm\:text-lg {
+    font-size: calc(1.125rem * var(--se-font-scale, 1)) !important;
+    line-height: calc(1.75rem * var(--se-font-scale, 1)) !important;
+  }
+  html.se-dark .sm\:text-xl {
+    font-size: calc(1.25rem * var(--se-font-scale, 1)) !important;
+    line-height: calc(1.75rem * var(--se-font-scale, 1)) !important;
+  }
+  html.se-dark .sm\:text-2xl {
+    font-size: calc(1.5rem * var(--se-font-scale, 1)) !important;
+    line-height: calc(2rem * var(--se-font-scale, 1)) !important;
+  }
+  html.se-dark .sm\:text-3xl {
+    font-size: calc(1.875rem * var(--se-font-scale, 1)) !important;
+    line-height: calc(2.25rem * var(--se-font-scale, 1)) !important;
+  }
+  html.se-dark .sm\:text-4xl {
+    font-size: calc(2.25rem * var(--se-font-scale, 1)) !important;
+    line-height: calc(2.5rem * var(--se-font-scale, 1)) !important;
+  }
+  html.se-dark .sm\:text-5xl {
+    font-size: calc(3rem * var(--se-font-scale, 1)) !important;
+  }
+}
+
+@media (min-width: 48rem) {
+  html.se-dark .md\:text-xxs {
+    font-size: calc(0.625rem * var(--se-font-scale, 1)) !important;
+    line-height: calc(0.875rem * var(--se-font-scale, 1)) !important;
+  }
+  html.se-dark .md\:text-xs {
+    font-size: calc(0.75rem * var(--se-font-scale, 1)) !important;
+    line-height: calc(1rem * var(--se-font-scale, 1)) !important;
+  }
+  html.se-dark .md\:text-sm {
+    font-size: calc(0.875rem * var(--se-font-scale, 1)) !important;
+    line-height: calc(1.25rem * var(--se-font-scale, 1)) !important;
+  }
+  html.se-dark .md\:text-base {
+    font-size: calc(1rem * var(--se-font-scale, 1)) !important;
+    line-height: calc(1.5rem * var(--se-font-scale, 1)) !important;
+  }
+  html.se-dark .md\:text-lg {
+    font-size: calc(1.125rem * var(--se-font-scale, 1)) !important;
+    line-height: calc(1.75rem * var(--se-font-scale, 1)) !important;
+  }
+  html.se-dark .md\:text-xl {
+    font-size: calc(1.25rem * var(--se-font-scale, 1)) !important;
+    line-height: calc(1.75rem * var(--se-font-scale, 1)) !important;
+  }
+  html.se-dark .md\:text-2xl {
+    font-size: calc(1.5rem * var(--se-font-scale, 1)) !important;
+    line-height: calc(2rem * var(--se-font-scale, 1)) !important;
+  }
+  html.se-dark .md\:text-3xl {
+    font-size: calc(1.875rem * var(--se-font-scale, 1)) !important;
+    line-height: calc(2.25rem * var(--se-font-scale, 1)) !important;
+  }
+  html.se-dark .md\:text-4xl {
+    font-size: calc(2.25rem * var(--se-font-scale, 1)) !important;
+    line-height: calc(2.5rem * var(--se-font-scale, 1)) !important;
+  }
+  html.se-dark .md\:text-5xl {
+    font-size: calc(3rem * var(--se-font-scale, 1)) !important;
+  }
+}
+
+@media (min-width: 64rem) {
+  html.se-dark .lg\:text-xxs {
+    font-size: calc(0.625rem * var(--se-font-scale, 1)) !important;
+    line-height: calc(0.875rem * var(--se-font-scale, 1)) !important;
+  }
+  html.se-dark .lg\:text-xs {
+    font-size: calc(0.75rem * var(--se-font-scale, 1)) !important;
+    line-height: calc(1rem * var(--se-font-scale, 1)) !important;
+  }
+  html.se-dark .lg\:text-sm {
+    font-size: calc(0.875rem * var(--se-font-scale, 1)) !important;
+    line-height: calc(1.25rem * var(--se-font-scale, 1)) !important;
+  }
+  html.se-dark .lg\:text-base {
+    font-size: calc(1rem * var(--se-font-scale, 1)) !important;
+    line-height: calc(1.5rem * var(--se-font-scale, 1)) !important;
+  }
+  html.se-dark .lg\:text-lg {
+    font-size: calc(1.125rem * var(--se-font-scale, 1)) !important;
+    line-height: calc(1.75rem * var(--se-font-scale, 1)) !important;
+  }
+  html.se-dark .lg\:text-xl {
+    font-size: calc(1.25rem * var(--se-font-scale, 1)) !important;
+    line-height: calc(1.75rem * var(--se-font-scale, 1)) !important;
+  }
+  html.se-dark .lg\:text-2xl {
+    font-size: calc(1.5rem * var(--se-font-scale, 1)) !important;
+    line-height: calc(2rem * var(--se-font-scale, 1)) !important;
+  }
+  html.se-dark .lg\:text-3xl {
+    font-size: calc(1.875rem * var(--se-font-scale, 1)) !important;
+    line-height: calc(2.25rem * var(--se-font-scale, 1)) !important;
+  }
+  html.se-dark .lg\:text-4xl {
+    font-size: calc(2.25rem * var(--se-font-scale, 1)) !important;
+    line-height: calc(2.5rem * var(--se-font-scale, 1)) !important;
+  }
+  html.se-dark .lg\:text-5xl {
+    font-size: calc(3rem * var(--se-font-scale, 1)) !important;
+  }
+}
+
+@media (min-width: 80rem) {
+  html.se-dark .xl\:text-xxs {
+    font-size: calc(0.625rem * var(--se-font-scale, 1)) !important;
+    line-height: calc(0.875rem * var(--se-font-scale, 1)) !important;
+  }
+  html.se-dark .xl\:text-xs {
+    font-size: calc(0.75rem * var(--se-font-scale, 1)) !important;
+    line-height: calc(1rem * var(--se-font-scale, 1)) !important;
+  }
+  html.se-dark .xl\:text-sm {
+    font-size: calc(0.875rem * var(--se-font-scale, 1)) !important;
+    line-height: calc(1.25rem * var(--se-font-scale, 1)) !important;
+  }
+  html.se-dark .xl\:text-base {
+    font-size: calc(1rem * var(--se-font-scale, 1)) !important;
+    line-height: calc(1.5rem * var(--se-font-scale, 1)) !important;
+  }
+  html.se-dark .xl\:text-lg {
+    font-size: calc(1.125rem * var(--se-font-scale, 1)) !important;
+    line-height: calc(1.75rem * var(--se-font-scale, 1)) !important;
+  }
+  html.se-dark .xl\:text-xl {
+    font-size: calc(1.25rem * var(--se-font-scale, 1)) !important;
+    line-height: calc(1.75rem * var(--se-font-scale, 1)) !important;
+  }
+  html.se-dark .xl\:text-2xl {
+    font-size: calc(1.5rem * var(--se-font-scale, 1)) !important;
+    line-height: calc(2rem * var(--se-font-scale, 1)) !important;
+  }
+  html.se-dark .xl\:text-3xl {
+    font-size: calc(1.875rem * var(--se-font-scale, 1)) !important;
+    line-height: calc(2.25rem * var(--se-font-scale, 1)) !important;
+  }
+  html.se-dark .xl\:text-4xl {
+    font-size: calc(2.25rem * var(--se-font-scale, 1)) !important;
+    line-height: calc(2.5rem * var(--se-font-scale, 1)) !important;
+  }
+  html.se-dark .xl\:text-5xl {
+    font-size: calc(3rem * var(--se-font-scale, 1)) !important;
+  }
+}
+
+/* ── shadcn/ui CSS variable tokens ──────────────────────────── */
+html.se-dark {
+  --background:           var(--se-bg);
+  --foreground:           var(--se-text);
+  --muted:                var(--se-bg3);
+  --muted-foreground:     var(--se-text-muted);
+  --popover:              var(--se-bg2);
+  --popover-foreground:   var(--se-text);
+  --card:                 var(--se-bg2);
+  --card-foreground:      var(--se-text);
+  --border:               var(--se-border);
+  --input:                var(--se-bg3);
+  --primary:              var(--se-accent);
+  --primary-foreground:   var(--se-accent-fg, #fff);
+  --secondary:            var(--se-bg2);
+  --secondary-foreground: var(--se-text-muted);
+  --accent:               var(--se-bg3);
+  --accent-foreground:    var(--se-text);
+  --destructive:          var(--se-danger);
+  --destructive-foreground: #fff;
+  --ring:                 var(--se-accent);
+}
+
+html.se-dark .bg-background       { background-color: var(--se-bg) !important; }
+html.se-dark .bg-card             { background-color: var(--se-bg2) !important; }
+html.se-dark .bg-popover          { background-color: var(--se-bg2) !important; }
+html.se-dark .bg-secondary        { background-color: var(--se-bg2) !important; }
+html.se-dark .bg-muted            { background-color: var(--se-bg3) !important; }
+html.se-dark .bg-accent           { background-color: var(--se-bg3) !important; }
+html.se-dark .bg-primary          { background-color: var(--se-accent) !important; }
+html.se-dark .bg-destructive      { background-color: var(--se-danger) !important; }
+
+html.se-dark .text-foreground         { color: var(--se-text) !important; }
+html.se-dark .text-card-foreground    { color: var(--se-text) !important; }
+html.se-dark .text-popover-foreground { color: var(--se-text) !important; }
+html.se-dark .text-primary-foreground { color: var(--se-accent-fg, #fff) !important; }
+html.se-dark .text-secondary-foreground { color: var(--se-text-muted) !important; }
+html.se-dark .text-muted-foreground  { color: var(--se-text-muted) !important; }
+html.se-dark .text-accent-foreground { color: var(--se-text) !important; }
+html.se-dark .text-destructive-foreground { color: #fff !important; }
+
+html.se-dark .border-border  { border-color: var(--se-border) !important; }
+html.se-dark .border-input   { border-color: var(--se-border) !important; }
+html.se-dark .border-primary { border-color: var(--se-accent) !important; }
+html.se-dark .ring-ring      { --tw-ring-color: var(--se-accent) !important; }
+
+/* ── Sonner toast library ────────────────────────────────────── */
+html.se-dark [data-sonner-toaster] [data-sonner-toast] {
+  background: var(--se-bg2) !important;
+  border-color: var(--se-border) !important;
+  color: var(--se-text) !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5) !important;
+}
+
+html.se-dark [data-sonner-toast] [data-title] {
+  color: var(--se-text) !important;
+}
+
+html.se-dark [data-sonner-toast] [data-description] {
+  color: var(--se-text-muted) !important;
+}
+
+html.se-dark [data-sonner-toast][data-type="success"] {
+  border-color: var(--se-success) !important;
+}
+
+html.se-dark [data-sonner-toast][data-type="error"] {
+  border-color: var(--se-danger) !important;
+}
+
+html.se-dark [data-sonner-toast] button {
+  background: var(--se-bg3) !important;
+  color: var(--se-text) !important;
+  border-color: var(--se-border) !important;
+}
+
+/* ── Zinc background scale ──────────────────────────────────── */
+html.se-dark [class~="bg-zinc-50"] {
+  background-color: var(--se-bg) !important;
+}
+
+html.se-dark [class~="bg-zinc-100"] {
+  background-color: var(--se-bg2) !important;
+}
+
+html.se-dark [class~="bg-zinc-200"],
+html.se-dark [class~="bg-zinc-300"] {
+  background-color: var(--se-bg3) !important;
+}
+
+html.se-dark .hover\:bg-zinc-100:hover,
+html.se-dark .hover\:bg-zinc-200:hover {
+  background-color: var(--se-bg3) !important;
+}
+
+/* Zinc borders */
+html.se-dark [class*="border-zinc-100"],
+html.se-dark [class*="border-zinc-200"],
+html.se-dark [class*="border-zinc-300"] {
+  border-color: var(--se-border) !important;
+}
+
+/* ── Listing description content (CSS-module hashed class) ───── */
+html.se-dark [class*="listing-description"] {
+  background-color: var(--se-bg2) !important;
+  color: var(--se-text) !important;
+}
+
+html.se-dark .heading-node {
+  color: var(--se-text) !important;
+}
+
+html.se-dark .text-node {
+  color: var(--se-text) !important;
+}
+
+html.se-dark .list-node,
+html.se-dark .list-node li {
+  color: var(--se-text) !important;
+}
+
+/* ── Arbitrary Tailwind values — profile tags ───────────────── */
+/* bg-[#EFF1F5]: Superteam light lavender tag background */
+html.se-dark [class~="bg-[#EFF1F5]"] {
+  background-color: var(--se-bg3) !important;
+  color: var(--se-text-muted) !important;
+}
+
+/* text-[#64739C]: Superteam medium slate-blue tag text */
+html.se-dark [class~="text-[#64739C]"] {
+  color: var(--se-text-muted) !important;
+}
+
+/* Catch other arbitrary light bg hex values (#E__, #F__) — genuinely
+   needs substring matching since the exact hex is unknown ahead of time.
+   Substring matching cannot tell a near-white chip (#EFF1F5, #F4F4FE) from
+   a saturated brand colour that merely starts with the same nibble
+   (#E11D48, #F97316), so hero/ad slide artwork — which supplies its own
+   palette and its own foreground colours — is excluded. Everything there
+   is drawn to sit on the slide, not on the page surface. */
+html.se-dark [class*="bg-[#E"]:not([data-slot="carousel-item"] *) {
+  background-color: var(--se-bg3) !important;
+}
+
+html.se-dark [class*="bg-[#F"]:not([data-slot="carousel-item"] *) {
+  background-color: var(--se-bg2) !important;
+}
+
+/* ── Logo handling ───────────────────────────────────────────── */
+/* The Earn wordmark SVG is a dark mark and disappears on a dark
+   background. A hue-preserving invert keeps it legible everywhere
+   the site renders it (nav, mobile nav, footer) — this is a pure
+   CSS rule so it applies automatically to any instance the SPA
+   renders, including ones added after navigation, with no JS
+   matching/swapping involved. */
+html.se-dark img[alt="Superteam Earn"] {
+  filter: invert(1) hue-rotate(180deg);
+}
+
+/* "Powered by Solana" footer badge — swap in a purpose-built dark
+   variant (dark pill, gradient mark) instead of algorithmically
+   inverting the light one. Matched on both alt text AND the file
+   name (belt-and-suspenders: some pages render a differently-cropped
+   instance of the same asset, and matching by src too means a stray
+   alt-text change on any one page doesn't silently break the swap and
+   leave the light logo showing). */
+/* The URL comes from a variable content.js fills with
+   chrome.runtime.getURL(), NOT a relative path. Chrome resolves relative
+   URLs in an injected content-script stylesheet against the PAGE, not the
+   stylesheet — so "../assets/solana-dark-logo.svg" silently became
+   https://superteam.fun/assets/solana-dark-logo.svg, a 404, and the light
+   badge stayed. If the variable is ever missing the declaration is
+   invalid and the original image simply renders, which is the safe
+   fallback. */
+html.se-dark img[alt="Powered by Solana"],
+html.se-dark img[src*="solana-powered"] {
+  content: var(--se-solana-logo);
+}
+
+/* ── Violet / FEATURED badge ────────────────────────────────── */
+html.se-dark [class~="text-violet-600"] {
+  color: color-mix(in srgb, var(--se-accent) 85%, white) !important;
+}
+
+html.se-dark [class~="bg-violet-600"] {
+  background-color: var(--se-accent) !important;
+}
+
+html.se-dark [class~="border-violet-600"] {
+  border-color: var(--se-accent) !important;
+}
+
+/* ── SVG fill / stroke colors ───────────────────────────────── */
+html.se-dark [class~="fill-gray-500"],
+html.se-dark [class~="fill-slate-500"] {
+  fill: var(--se-text-muted) !important;
+}
+
+html.se-dark [class~="stroke-gray-500"],
+html.se-dark [class~="stroke-slate-500"] {
+  stroke: var(--se-text-muted) !important;
+}
+
+/* ── Profile banner image — dim in dark mode ────────────────── */
+html.se-dark img[src*="/assets/backgrounds/"] {
+  filter: brightness(0.65);
+}
+
+/* ── Stone / neutral color scales (mirrors zinc/gray) ────────── */
+html.se-dark [class~="text-stone-900"],
+html.se-dark [class~="text-stone-800"],
+html.se-dark [class~="text-stone-700"] {
+  color: var(--se-text) !important;
+}
+
+html.se-dark [class~="text-stone-600"],
+html.se-dark [class~="text-stone-500"],
+html.se-dark [class~="text-stone-400"] {
+  color: var(--se-text-muted) !important;
+}
+
+html.se-dark [class~="text-neutral-900"],
+html.se-dark [class~="text-neutral-800"],
+html.se-dark [class~="text-neutral-700"] {
+  color: var(--se-text) !important;
+}
+
+html.se-dark [class~="text-neutral-600"],
+html.se-dark [class~="text-neutral-500"],
+html.se-dark [class~="text-neutral-400"] {
+  color: var(--se-text-muted) !important;
+}
+
+html.se-dark [class~="bg-stone-100"],
+html.se-dark [class~="bg-neutral-100"] {
+  background-color: var(--se-bg2) !important;
+}
+
+html.se-dark [class~="bg-stone-200"],
+html.se-dark [class~="bg-neutral-200"] {
+  background-color: var(--se-bg3) !important;
+}
+
+/* ── /earn/agents page — page-scoped CSS custom properties ─────
+   This page (superteam.fun/earn/agents) doesn't use the standard
+   gray/slate/white Tailwind palette the rules above target — it
+   defines its own page-local custom properties (--agent-tint,
+   --agent-ink, --agent-ink-soft, --agent-dark, --agent-accent,
+   --agent-accent-2) via Tailwind arbitrary-value classes like
+   "bg-[var(--agent-tint)]" and "[--agent-tint:#f5f7fb]", so none of
+   the selectors above ever reach it — that's why it stayed light.
+   Redefining the properties themselves (rather than every element
+   that consumes them) on the element that declares them lets every
+   var(--agent-*) usage on the page pick up the dark palette
+   automatically, including ones added later by client-side rendering.
+   --agent-accent / --agent-accent-2 are left untouched — they're this
+   page's brand identity (teal/amber), same principle as preserving
+   bg-brand-purple elsewhere. */
+html.se-dark [class*="--agent-tint:"] {
+  --agent-tint: var(--se-bg) !important;
+}
+
+html.se-dark [class*="--agent-ink-soft:"] {
+  --agent-ink-soft: var(--se-text-muted) !important;
+}
+
+html.se-dark [class*="--agent-ink:"] {
+  --agent-ink: var(--se-text) !important;
+}
+
+html.se-dark [class*="--agent-dark:"] {
+  --agent-dark: var(--se-bg2) !important;
+}
+
+/* ── Home hero carousel (logged-out) ──────────────────────────
+   The two hero slides are self-contained ARTWORK, not site chrome: each
+   ships its own background (a photographic banner behind a black scrim,
+   and a light-cyan `from-[#00CCFE] to-[#A6EDFF]` gradient) plus the text
+   and button colours chosen to sit on it. The global token rules were
+   recolouring the foregrounds while leaving those backgrounds untouched,
+   which is what made the slides unreadable when logged out:
+     • the sponsor slide's `text-black` headline/body went LIGHT on light
+       cyan,
+     • the "Sign Up" button's `bg-white` went dark while its `text-[#3223A0]`
+       stayed dark purple, and
+     • the active carousel dot's `bg-white` went dark against the photo.
+   So restore the site's own values inside a slide. Anchored on shadcn's
+   `data-slot` attributes, which are structural and survive class churn.
+   These rules are two compounds deep, so they outrank the single-compound
+   token rules above regardless of source order. */
+html.se-dark [data-slot="carousel-item"] [class~="text-black"] {
+  color: #000 !important;
+}
+
+html.se-dark [data-slot="carousel-item"] [class~="text-white"] {
+  color: #fff !important;
+}
+
+html.se-dark [data-slot="carousel-item"] [class~="text-slate-200"] {
+  color: #e2e8f0 !important;
+}
+
+html.se-dark [data-slot="carousel-item"] [class~="bg-white"],
+html.se-dark [data-slot="carousel-dots"] [class~="bg-white"] {
+  background-color: #fff !important;
+  box-shadow: none !important;
+}
+
+html.se-dark [data-slot="carousel-item"] [class~="bg-black"] {
+  background-color: #000 !important;
+}
+
+/* A full-brightness photo/cyan slide is the brightest thing on an
+   otherwise dark page. Take the edge off without washing out the
+   artwork or touching its contrast ratios materially. */
+html.se-dark [data-slot="carousel-item"] {
+  filter: brightness(0.9);
+}
+
+/* ════════════════════════════════════════════════════════════════
+   IN-PAGE TOOLBAR — quick dark toggle + theme menu.
+   Always present (light or dark) so users can switch from the navbar.
+   Self-contained styling: does NOT depend on html.se-dark.
+   ════════════════════════════════════════════════════════════════ */
+/* Wrapper content.js slips around the mobile navbar's trailing button so
+   the toolbar can sit beside it without becoming a third child of the
+   site's justify-between row (which would re-centre that button). */
+.se-tb-slot {
+  display: inline-flex;
+  align-items: center;
+}
+
+.se-toolbar {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  position: relative;
+  margin-left: 6px;
+  z-index: 60;
+  vertical-align: middle;
+}
+
+/* Floating fallback — mounted by content.js when Hide nav is on, since the
+   toolbar normally lives inside the navbar that just disappeared. Without
+   it, hiding the nav would strand the user with no way to turn dark mode
+   back off short of opening the popup. */
+.se-toolbar.se-toolbar-floating {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  margin-left: 0;
+  padding: 4px;
+  border-radius: 10px;
+  background: rgba(22, 27, 34, 0.86);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(8px);
+  color: #e6edf3;
+  z-index: 2147483000;
+}
+
+/* The theme button's gradient bars are painted from the live palette
+   variables, which only exist on html.se-dark. In light mode the SVG's
+   own stop fallbacks take over, so no extra rule is needed here — but the
+   button still needs a visible resting opacity next to Earn's own icons. */
+.se-toolbar .se-tb-menu-btn { opacity: 1; }
+
+.se-tb-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: currentColor;
+  cursor: pointer;
+  opacity: 0.75;
+  transition: opacity .15s, background .15s, color .15s;
+  -webkit-appearance: none;
+  appearance: none;
+  line-height: 0;
+}
+
+.se-tb-btn:hover {
+  opacity: 1;
+  background: rgba(127, 127, 127, 0.14);
+}
+
+.se-tb-btn svg {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+
+/* Both toggle states inherit the navbar's own icon colour (via
+   currentColor on .se-tb-btn) rather than carrying their own amber/violet
+   accents, so the cluster reads as part of Earn's navbar instead of
+   something bolted on. The sun/moon shape already communicates the state;
+   colouring it as well made the toolbar the loudest thing in the bar. */
+.se-toolbar .se-tb-toggle { opacity: 0.9; }
+.se-toolbar:hover .se-tb-toggle { opacity: 1; }
+
+/* ── Theme menu dropdown ─────────────────────────────────────── */
+.se-tb-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 220px;
+  max-height: 70vh;
+  overflow-y: auto;
+  padding: 8px;
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 12px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+  display: none;
+  flex-direction: column;
+  gap: 4px;
+  z-index: 2147483000;
+}
+
+.se-tb-menu.open { display: flex; }
+
+.se-tb-menu-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.se-tb-menu-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: #565f89;
+  padding: 6px 4px 2px;
+}
+
+/* Theme item — matches the popup's preset-btn visual language
+   (diagonal two-tone swatch chip, label below) instead of the old
+   circle+dot layout, so the in-page menu and the popup Customize tab
+   read as the same design system. */
+.se-tb-menu-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 6px 7px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: #e6edf3;
+  font-size: 11px;
+  font-weight: 500;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  text-align: center;
+  cursor: pointer;
+  transition: background .12s, border-color .12s;
+  white-space: nowrap;
+}
+
+.se-tb-menu-item:hover { background: #21262d; border-color: #30363d; }
+.se-tb-menu-item.active { border-color: #5522e0; background: #21262d; }
+
+.se-tb-swatch {
+  display: block;
+  width: 26px;
+  height: 16px;
+  border-radius: 4px;
+  border: 1px solid #30363d;
+  background: linear-gradient(135deg, var(--sw-bg, #21262d) 50%, var(--sw-accent, #30363d) 50%);
+  flex-shrink: 0;
+}
+
+.se-tb-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.se-tb-menu-item-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.se-tb-menu-edit,
+.se-tb-menu-delete {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #21262d;
+  border: 1px solid #30363d;
+  color: #8b949e;
+  font-size: 10px;
+  line-height: 1;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.se-tb-menu-edit:hover { background: #30363d; color: #e6edf3; }
+.se-tb-menu-delete:hover { background: #f85149; border-color: #f85149; color: #fff; }
+
+/* ── Touch input ───────────────────────────────────────────────
+   Firefox for Android runs the same in-page toolbar, where the 32px
+   buttons and the hover-only affordances below them were both sized for
+   a mouse. `pointer: coarse` is the only signal that separates a phone
+   from a narrow desktop window, so scope the touch sizing to it rather
+   than to a width breakpoint — a resized desktop window keeps the
+   compact toolbar it was designed for. */
+@media (pointer: coarse) {
+  .se-tb-btn {
+    width: 40px;
+    height: 40px;
+    opacity: 1;              /* no hover to reveal it on the way in */
+  }
+
+  .se-tb-btn svg { width: 20px; height: 20px; }
+
+  .se-toolbar .se-tb-toggle { opacity: 1; }
+
+  /* The menu is anchored to the toolbar's right edge, which sits near the
+     viewport edge on a phone: 220px of fixed width plus the site's own
+     padding overflows narrow screens. Cap it to the viewport instead. */
+  .se-tb-menu {
+    min-width: 0;
+    width: max-content;
+    max-width: calc(100vw - 24px);
+    max-height: 60vh;
+  }
+
+  /* Saved-theme rows carry two 16px round buttons sitting a few px apart —
+     fine for a cursor, well under a fingertip on either count. Grow both
+     the row and the buttons, and scale their glyphs to match. */
+  .se-tb-menu-item { min-height: 44px; }
+
+  .se-tb-menu-item-row { gap: 8px; }
+
+  .se-tb-menu-edit,
+  .se-tb-menu-delete {
+    width: 28px;
+    height: 28px;
+    font-size: 13px;
+  }
+
+  /* The floating fallback sits under Android's URL bar at top: 12px. */
+  .se-toolbar.se-toolbar-floating {
+    top: max(12px, env(safe-area-inset-top));
+    right: max(12px, env(safe-area-inset-right));
+  }
+}
