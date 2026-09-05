@@ -74,6 +74,12 @@ for platform in $PLATFORMS; do
     fi
   fi
 
+  # The artifact arrives as a browser download, so every file inside carries
+  # com.apple.quarantine. ditto preserves it, export bakes it into the package,
+  # and App Store Connect rejects the upload with 91109 "Invalid package
+  # contents". Stripping the download marker changes nothing about the code.
+  xattr -dr com.apple.quarantine "$archive" 2>/dev/null || true
+
   echo "$platform: $version ($build), $sdk, host $host"
 
   rm -rf "$DIR/out-$platform"
