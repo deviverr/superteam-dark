@@ -1,0 +1,19 @@
+Thank you for the note. Superteam Earn Dark is a Safari web extension, so the app you are reviewing is the container app that delivers it; all of the functionality is the extension, which restyles one website: superteam.fun/earn, the public bounty and grant board run by Superteam.
+
+A screen recording is attached, captured on a physical iPhone running the current iOS. It begins with launching the app and shows the typical user flow end to end: the app's instructions screen, enabling the extension, granting it access to superteam.fun, the site rendering dark, the customization panel with its presets and per-element controls, and the site's original light appearance with the extension switched off.
+
+1. Screen recording: attached.
+
+2. Purpose and audience. The Superteam Earn board ships light-only. The extension gives it a dark theme plus appearance controls the site does not offer: eight presets, saved custom themes, per-element colors, a wallpaper, font scaling and section hiding. It is for the people who read that board regularly, mostly freelance developers and designers browsing bounty listings, who work at night or simply prefer a dark interface.
+
+3. Setup and access. Install and open the app; it explains the steps. Enable the extension in Settings > Apps > Safari > Extensions > Superteam Earn Dark, or from Safari's extensions button in the address bar. Open https://superteam.fun/earn, tap the extensions button, choose Superteam Earn Dark, then Always Allow > Always Allow on This Website. The page turns dark immediately and a theme button appears in the site's own top bar; the extensions button opens the full panel.
+
+There is no sign-in, no registration and no user account anywhere in the app, so there are no demo credentials to supply and no account deletion to offer. There is no paid content, no in-app purchase and no user-generated content. Every feature is reachable as soon as the extension is allowed on the site.
+
+4. External services: none. The app and the extension have no backend. There are no data providers, no authentication service, no payment processor, no advertising or analytics SDK and no AI service. The extension makes no network requests of its own; the only content shown is superteam.fun's own page, loaded by Safari as normal. Its permissions are storage and alarms, with host access limited to superteam.fun/earn. All settings are stored on the device and are never transmitted.
+
+5. Regional differences: none. The app behaves identically in every region, is English-only, and has no region-gated features or content.
+
+6. Regulated industries and protected material: none. The app is not in a regulated industry. It changes the appearance of a publicly accessible website inside the user's own browser; it does not redistribute, reproduce or repackage that site's content.
+
+This information has also been added to the Notes field of App Review Information.

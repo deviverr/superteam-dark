@@ -18,9 +18,10 @@
 
     <!-- ── iOS / iPadOS ─────────────────────────────────────────
          The system gives us no API to toggle the extension or deep-link
-         into its pane, so the only useful thing this app can do is spell
-         out the walk. Both routes are listed because the Safari one is
-         faster but only exists once a Safari window is open. -->
+         into its pane, so the walk has to be spelled out. Both routes are
+         listed because the Safari one is faster but only exists once a
+         Safari window is open; the button covers the Settings route as far
+         as iOS lets an app take it, which is its own Settings page. -->
     <section class="platform-ios card">
         <h2>Turn it on in Safari</h2>
         <ol>
@@ -29,7 +30,9 @@
             <li>Tap <b>Manage Extensions</b>, then switch <b>Superteam Earn Dark</b> on.</li>
             <li>Tap the extensions button again, choose <b>Superteam Earn Dark</b>, and pick <b>Always Allow</b> → <b>Always Allow on This Website</b>.</li>
         </ol>
-        <p class="alt">Or from the Settings app: <b>Apps</b> › <b>Safari</b> › <b>Extensions</b> › <b>Superteam Earn Dark</b>.</p>
+        <button class="open-settings">Open Settings</button>
+
+        <p class="alt">Settings opens on this app. From there: <b>Apps</b> › <b>Safari</b> › <b>Extensions</b> › <b>Superteam Earn Dark</b>. iOS gives an app no way to switch its own extension on, so the last step is always yours.</p>
     </section>
 
     <!-- ── macOS ────────────────────────────────────────────────

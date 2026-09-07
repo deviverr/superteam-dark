@@ -28,7 +28,12 @@ class ViewController: PlatformViewController, WKNavigationDelegate, WKScriptMess
         self.webView.navigationDelegate = self
 
 #if os(iOS)
-        self.webView.scrollView.isScrollEnabled = false
+        // The converter's template disables scrolling, which works only as
+        // long as the page fits. Ours does not on a phone, so the cards
+        // below the fold were unreachable. Let the web view scroll and keep
+        // the indicator off, so it still reads as one static screen.
+        self.webView.scrollView.showsVerticalScrollIndicator = false
+        self.webView.scrollView.contentInsetAdjustmentBehavior = .always
 #endif
 
         self.webView.configuration.userContentController.add(self, name: "controller")
@@ -60,7 +65,15 @@ class ViewController: PlatformViewController, WKNavigationDelegate, WKScriptMess
     }
 
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
-#if os(macOS)
+#if os(iOS)
+        // iOS has no API to toggle a web extension or deep-link into its
+        // pane, so the furthest we can take the user is the Settings app.
+        if (message.body as? String == "open-settings") {
+            if let url = URL(string: UIApplication.openSettingsURLString) {
+                UIApplication.shared.open(url)
+            }
+        }
+#elseif os(macOS)
         if (message.body as! String != "open-preferences") {
             return
         }

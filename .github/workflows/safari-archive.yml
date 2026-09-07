@@ -25,7 +25,7 @@ on:
       - main
 
 env:
-  BUILD_NUMBER: "6"
+  BUILD_NUMBER: "7"
   PROJECT: "safari/xcode/Superteam Earn Dark/Superteam Earn Dark.xcodeproj"
 
 jobs:
