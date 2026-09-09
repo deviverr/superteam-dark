@@ -24,6 +24,10 @@
     --radius:  12px;
 }
 
+/* button below sets display:block, which outranks the user-agent rule for
+   [hidden]; without this the button stays on screen after Script.js hides it. */
+[hidden] { display: none !important; }
+
 html { height: 100%; }
 
 body {
@@ -121,6 +125,10 @@ button {
 
 button:hover  { filter: brightness(1.12); }
 button:active { filter: brightness(0.92); }
+
+/* Stands in for .open-preferences when Safari declines the deep link, so it
+   carries the same top margin the button had. */
+.preferences-unavailable { margin-top: 14px !important; }
 
 .privacy {
     margin: 0;

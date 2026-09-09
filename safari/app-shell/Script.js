@@ -26,6 +26,18 @@ function show(platform, enabled, useSettingsInsteadOfPreferences) {
     }
 }
 
+/* Called by ViewController.swift when Safari refuses to open the extension's
+   pane. The button cannot do its job, so retire it and show the manual route
+   instead of leaving a control that does nothing when clicked. */
+function preferencesUnavailable() {
+    for (const el of document.querySelectorAll('.open-preferences')) {
+        el.hidden = true;
+    }
+    for (const el of document.querySelectorAll('.preferences-unavailable')) {
+        el.hidden = false;
+    }
+}
+
 function send(message) {
     return () => webkit.messageHandlers.controller.postMessage(message);
 }

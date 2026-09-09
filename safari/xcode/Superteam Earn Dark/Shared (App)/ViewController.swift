@@ -79,12 +79,22 @@ class ViewController: PlatformViewController, WKNavigationDelegate, WKScriptMess
         }
 
         SFSafariApplication.showPreferencesForExtension(withIdentifier: extensionBundleIdentifier) { error in
-            guard error == nil else {
-                // Insert code to inform the user that something went wrong.
-                return
-            }
-
             DispatchQueue.main.async {
+                guard error == nil else {
+                    // The converter's template swallowed this error, which left
+                    // the one button in the app looking dead: no pane, no quit,
+                    // no message. Safari refuses the deep link whenever it does
+                    // not recognise the extension — signing the app for
+                    // development rather than the App Store is enough to do it.
+                    // Bring Safari up and swap the button for the manual route
+                    // rather than leaving the user clicking nothing.
+                    NSWorkspace.shared.openApplication(
+                        at: URL(fileURLWithPath: "/Applications/Safari.app"),
+                        configuration: NSWorkspace.OpenConfiguration())
+                    self.webView.evaluateJavaScript("preferencesUnavailable()")
+                    return
+                }
+
                 NSApp.terminate(self)
             }
         }
